@@ -291,8 +291,9 @@ def print_summary():
 
 
 def save_results():
-    """Save detailed results to JSON - appends to runs.json"""
+    """Save detailed results to JSON and embed in dashboard.html"""
     import os
+    import re
     duration = metrics["end_time"] - metrics["start_time"]
 
     # Calculate stats
@@ -302,13 +303,18 @@ def save_results():
     slowest = max(metrics["step_times"], key=lambda x: x["duration"]) if metrics["step_times"] else None
 
     result = {
+        "agent": "auto",
+        "model": None,
         "timestamp": time.strftime("%Y-%m-%d %H:%M:%S"),
-        "site": SITE_URL,
-        "version": metrics.get("version", "1"),
-        "total_duration_seconds": round(duration, 3),
+        "duration_seconds": round(duration, 2),
         "steps_completed": metrics["steps_completed"],
-        "total_steps": TOTAL_STEPS,
         "result": metrics["result"],
+        "solve_breakdown": {
+            "llm_solved": 0,
+            "exploit_fallback": metrics["steps_completed"]
+        },
+        "token_usage": None,
+        "version": metrics.get("version", "1"),
         "stats": {
             "avg_time_per_step": round(avg_time, 3),
             "fastest_step": fastest["step"] if fastest else None,
@@ -323,29 +329,43 @@ def save_results():
         ]
     }
 
-    # Append to runs.json (keeps all runs in one file)
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    runs_path = os.path.join(script_dir, "runs.json")
+    results_path = os.path.join(script_dir, "results.json")
+    dashboard_path = os.path.join(script_dir, "dashboard.html")
 
     # Load existing runs or start fresh
     runs = []
-    if os.path.exists(runs_path):
+    if os.path.exists(results_path):
         try:
-            with open(runs_path, "r") as f:
+            with open(results_path, "r") as f:
                 runs = json.load(f)
         except:
             runs = []
 
     runs.append(result)
 
-    with open(runs_path, "w") as f:
+    # Save to results.json
+    with open(results_path, "w") as f:
         json.dump(runs, f, indent=2)
+
+    # Embed data in dashboard.html
+    if os.path.exists(dashboard_path):
+        with open(dashboard_path, "r") as f:
+            html = f.read()
+        embedded_script = f'<script id="embedded-data">const EMBEDDED_RESULTS = {json.dumps(runs)};</script>'
+        html = re.sub(
+            r'<!-- EMBEDDED_DATA_START -->.*?<!-- EMBEDDED_DATA_END -->',
+            f'<!-- EMBEDDED_DATA_START -->\n    {embedded_script}\n    <!-- EMBEDDED_DATA_END -->',
+            html,
+            flags=re.DOTALL
+        )
+        with open(dashboard_path, "w") as f:
+            f.write(html)
 
     print(f"\n{'='*50}")
     print(f"RUN #{len(runs)} SAVED")
     print(f"{'='*50}")
-    print(f"All runs: {runs_path}")
-    print(f"Dashboard: file://{script_dir}/dashboard.html")
+    print(f"Dashboard: file://{dashboard_path}")
     print(f"{'='*50}")
 
 

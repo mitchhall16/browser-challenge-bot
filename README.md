@@ -1,44 +1,68 @@
 # Browser Navigation Challenge Bot
 
-Solves all 30 levels in ~30 seconds. No AI calls - $0 cost per run.
+Three agents that solve all 30 levels of the browser challenge:
+
+| Agent | How it works | Cost |
+|-------|--------------|------|
+| **Auto** | Pure automation - decrypts session codes | $0 |
+| **Haiku** | Claude Haiku + exploit fallback | ~$0.04/run |
+| **Sonnet** | Claude Sonnet + exploit fallback | ~$0.15/run |
 
 ## Setup
 
 ```bash
-git clone https://github.com/mitchhall16/browser-challenge-bot.git
-cd browser-challenge-bot
-pip install playwright
+git clone https://github.com/mitchhall16/figure-agent.git
+cd figure-agent
+pip install -r requirements.txt
 playwright install chromium
 ```
 
-## Run the Bot
+**For LLM agents (Haiku/Sonnet):** Copy the example env file and add your API key:
 
 ```bash
-# Single run
-python agent.py
-
-# Multiple runs (e.g., 10 times)
-python run_multiple.py 10
+cp .env.example .env
+# Edit .env and replace "your-key-here" with your Anthropic API key
 ```
 
-## View Dashboard
+## Run
 
 ```bash
-python start_dashboard.py
+# Auto agent (no API key needed)
+python3 agent-auto.py
+
+# Haiku agent (requires API key)
+python3 agent-haiku.py
+
+# Sonnet agent (requires API key)
+python3 agent-sonnet.py
+
+# Run multiple times
+python3 run_multiple.py auto 5      # 5 auto runs
+python3 run_multiple.py haiku 3     # 3 haiku runs
+
+# Compare all three agents
+python3 compare.py
 ```
 
-This opens the dashboard in your browser. All runs are saved to `runs.json` and displayed automatically.
+## View Results
 
-- Chart shows run times with timestamps
-- Filter by version (v1, v2, v3)
-- Click any run to see step-by-step breakdown
+```bash
+# Command line summary
+python3 view_results.py
+
+# Web dashboard (just open the file - no server needed!)
+open dashboard.html
+```
 
 ## Files
 
-| File | What it does |
-|------|--------------|
-| `agent.py` | The bot - completes all 30 levels |
-| `run_multiple.py` | Run the bot N times |
-| `start_dashboard.py` | Open the dashboard |
-| `dashboard.html` | Results visualization |
-| `runs.json` | Your run history (auto-created) |
+| File | Description |
+|------|-------------|
+| `agent-auto.py` | Pure automation agent ($0) |
+| `agent-haiku.py` | Haiku LLM agent |
+| `agent-sonnet.py` | Sonnet LLM agent |
+| `run_multiple.py` | Run any agent N times |
+| `compare.py` | Run all 3 agents and compare |
+| `view_results.py` | CLI results summary |
+| `dashboard.html` | Web dashboard |
+| `results.json` | All run history (auto-created) |
