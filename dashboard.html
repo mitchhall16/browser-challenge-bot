@@ -199,15 +199,27 @@
         </div>
     </div>
 
-    <input type="file" id="fileInput" accept=".json" style="display:none" onchange="handleFile(event)">
-    <div style="position:fixed;bottom:30px;right:30px;display:flex;gap:10px;">
-        <button class="add-run-btn" style="background:#ff4444;position:static;" onclick="if(confirm('Clear all runs?')){localStorage.removeItem('botRuns');location.reload();}">Clear All</button>
-        <button class="add-run-btn" style="position:static;" onclick="document.getElementById('fileInput').click()">Load Run (JSON)</button>
+    <div style="position:fixed;bottom:30px;right:30px;">
+        <button class="add-run-btn" onclick="loadRunsFromFile()">Refresh</button>
     </div>
 
     <script>
-        let runs = JSON.parse(localStorage.getItem('botRuns') || '[]');
+        let runs = [];
         let chart = null;
+
+        // Auto-load runs.json on page load
+        async function loadRunsFromFile() {
+            try {
+                const response = await fetch('runs.json?' + Date.now());
+                runs = await response.json();
+                updateStats();
+                updateChart();
+                renderRuns();
+            } catch (e) {
+                console.log('No runs.json found, starting fresh');
+            }
+        }
+        loadRunsFromFile();
 
         function updateStats() {
             const successful = runs.filter(r => r.result === 'SUCCESS');
@@ -233,36 +245,60 @@
             chart = new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: successful.map((_, i) => `Run ${i + 1}`),
+                    labels: successful.map(r => {
+                        // Extract time portion from timestamp like "2026-02-02 22:10:47"
+                        const parts = (r.timestamp || '').split(' ');
+                        return parts[1] || `Run`;
+                    }),
                     datasets: [{
                         label: 'Time (seconds)',
                         data: successful.map(r => r.total_duration_seconds),
                         borderColor: '#00ff88',
                         backgroundColor: 'rgba(0, 255, 136, 0.1)',
                         fill: true,
-                        tension: 0.4
+                        tension: 0.4,
+                        pointRadius: 6,
+                        pointBackgroundColor: successful.map(r => {
+                            if (r.version === '1') return '#ff6b6b';
+                            if (r.version === '2') return '#4ecdc4';
+                            if (r.version === '3') return '#ffe66d';
+                            return '#00ff88';
+                        })
                     }]
                 },
                 options: {
                     responsive: true,
                     plugins: {
-                        legend: { labels: { color: '#fff' } }
+                        legend: { labels: { color: '#fff' } },
+                        tooltip: {
+                            callbacks: {
+                                label: (ctx) => {
+                                    const run = successful[ctx.dataIndex];
+                                    return `v${run.version}: ${run.total_duration_seconds.toFixed(2)}s`;
+                                }
+                            }
+                        }
                     },
                     scales: {
                         y: {
                             grid: { color: 'rgba(255,255,255,0.1)' },
-                            ticks: { color: '#888' }
+                            ticks: { color: '#888' },
+                            title: { display: true, text: 'Seconds', color: '#888' }
                         },
                         x: {
                             grid: { color: 'rgba(255,255,255,0.1)' },
-                            ticks: { color: '#888' }
+                            ticks: { color: '#888' },
+                            title: { display: true, text: 'Time', color: '#888' }
                         }
                     }
                 }
             });
         }
 
+        let currentFilter = 'all';
+
         function renderRuns(filter = 'all') {
+            currentFilter = filter;
             const list = document.getElementById('runsList');
             const filtered = filter === 'all'
                 ? runs
@@ -270,7 +306,7 @@
 
             list.innerHTML = filtered.slice().reverse().map((run, idx) => `
                 <div class="run-card">
-                    <div class="run-header" onclick="toggleDetails(${runs.length - 1 - idx})">
+                    <div class="run-header" onclick="toggleDetails('card-${idx}')">
                         <div class="run-meta">
                             <span class="run-version">v${run.version || '?'}</span>
                             <span class="run-time">${run.total_duration_seconds?.toFixed(2) || '?'}s</span>
@@ -281,10 +317,10 @@
                         </div>
                         <div>
                             <span style="color:#888">${run.timestamp}</span>
-                            <span class="arrow" id="arrow-${runs.length - 1 - idx}">▼</span>
+                            <span class="arrow" id="arrow-card-${idx}">▼</span>
                         </div>
                     </div>
-                    <div class="run-details" id="details-${runs.length - 1 - idx}">
+                    <div class="run-details" id="details-card-${idx}">
                         <div class="run-details-content">
                             <h4 style="margin-bottom:12px">Step Breakdown</h4>
                             <div class="steps-grid">
@@ -295,67 +331,23 @@
                                     </div>
                                 `).join('')}
                             </div>
-                            ${run.codes ? `
-                                <h4 style="margin:16px 0 12px">Codes Used</h4>
-                                <div class="steps-grid">
-                                    ${run.codes.slice(1).map((code, i) => `
-                                        <div class="step-item">
-                                            <span>Step ${i+1}</span>
-                                            <span class="step-code">${code}</span>
-                                        </div>
-                                    `).join('')}
-                                </div>
-                            ` : ''}
                         </div>
                     </div>
                 </div>
             `).join('');
         }
 
-        function toggleDetails(idx) {
-            const details = document.getElementById(`details-${idx}`);
-            const arrow = document.getElementById(`arrow-${idx}`);
-            details.classList.toggle('open');
-            arrow.classList.toggle('open');
+        function toggleDetails(id) {
+            const details = document.getElementById(`details-${id}`);
+            const arrow = document.getElementById(`arrow-${id}`);
+            if (details) details.classList.toggle('open');
+            if (arrow) arrow.classList.toggle('open');
         }
 
         function filterRuns(version) {
             document.querySelectorAll('.version-btn').forEach(btn => btn.classList.remove('active'));
             event.target.classList.add('active');
             renderRuns(version);
-        }
-
-        function handleFile(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const data = JSON.parse(e.target.result);
-
-                    // Check if this run already exists
-                    const exists = runs.some(r =>
-                        r.timestamp === data.timestamp &&
-                        r.total_duration_seconds === data.total_duration_seconds
-                    );
-
-                    if (!exists) {
-                        runs.push(data);
-                        localStorage.setItem('botRuns', JSON.stringify(runs));
-                        updateStats();
-                        updateChart();
-                        renderRuns();
-                        alert('Run loaded successfully!');
-                    } else {
-                        alert('This run is already in the dashboard.');
-                    }
-                } catch (err) {
-                    alert('Invalid JSON file: ' + err.message);
-                }
-            };
-            reader.readAsText(file);
-            event.target.value = ''; // Reset so same file can be loaded again
         }
 
         // Initial render

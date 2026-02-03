@@ -291,7 +291,8 @@ def print_summary():
 
 
 def save_results():
-    """Save detailed results to JSON"""
+    """Save detailed results to JSON - appends to runs.json"""
+    import os
     duration = metrics["end_time"] - metrics["start_time"]
 
     # Calculate stats
@@ -300,7 +301,7 @@ def save_results():
     fastest = min(metrics["step_times"], key=lambda x: x["duration"]) if metrics["step_times"] else None
     slowest = max(metrics["step_times"], key=lambda x: x["duration"]) if metrics["step_times"] else None
 
-    results = {
+    result = {
         "timestamp": time.strftime("%Y-%m-%d %H:%M:%S"),
         "site": SITE_URL,
         "version": metrics.get("version", "1"),
@@ -322,18 +323,29 @@ def save_results():
         ]
     }
 
-    import os
-    results_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "run-results.json")
-    with open(results_path, "w") as f:
-        json.dump(results, f, indent=2)
+    # Append to runs.json (keeps all runs in one file)
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    runs_path = os.path.join(script_dir, "runs.json")
+
+    # Load existing runs or start fresh
+    runs = []
+    if os.path.exists(runs_path):
+        try:
+            with open(runs_path, "r") as f:
+                runs = json.load(f)
+        except:
+            runs = []
+
+    runs.append(result)
+
+    with open(runs_path, "w") as f:
+        json.dump(runs, f, indent=2)
 
     print(f"\n{'='*50}")
-    print("RESULTS SAVED")
+    print(f"RUN #{len(runs)} SAVED")
     print(f"{'='*50}")
-    print(f"File: {results_path}")
-    print(f"\nView in dashboard:")
-    print(f"  https://mitchhall16.github.io/browser-challenge-bot/dashboard.html")
-    print(f"\nClick 'Load Run (JSON)' and select your run-results.json")
+    print(f"All runs: {runs_path}")
+    print(f"Dashboard: file://{script_dir}/dashboard.html")
     print(f"{'='*50}")
 
 
