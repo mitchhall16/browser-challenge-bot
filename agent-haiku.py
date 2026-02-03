@@ -73,6 +73,7 @@ def ask_llm(client, img, step, code):
     try:
         msg = client.messages.create(
             model=MODEL, max_tokens=50, temperature=0, system=SYSTEM_PROMPT,
+            timeout=LLM_TIMEOUT,
             messages=[{"role": "user", "content": [
                 {"type": "image", "source": {"type": "base64", "media_type": "image/png", "data": img}},
                 {"type": "text", "text": f"Step {step}. Code: {code}. GO."}
