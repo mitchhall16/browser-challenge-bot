@@ -57,11 +57,11 @@ open dashboard.html                # Visual dashboard
 
 ## What This Proves
 
-Throwing a frontier AI model at a problem isn't always the answer. Sonnet costs 4x more than Haiku and is actually slower. Both cost infinitely more than automation that does the same job.
+When a task has a clear beginning and end, you don't always need AI. This challenge has 30 defined steps with predictable logic — perfect for automation. Reverse engineering took a few hours but produced a solution that runs in ~29 seconds, forever, for free.
 
-The real skill isn't prompting an AI to click buttons — it's knowing when NOT to use AI. Reverse engineering took a few hours but produced a solution that runs in ~29 seconds, forever, for free.
+That said, AI shines when you give it a strong foundation to work from. Haiku and Sonnet both performed way better with the cheat sheet baked in than they would have going in blind. The takeaway isn't that AI is useless — it's that building a solid understanding of the problem first makes everything better, whether you're automating or prompting.
 
-My thought process was: why throw AI at a problem blind when you can dissect it first? Reverse engineer the site, automate the exploit, maximize efficiency — then hand it to the AI models with a full cheat sheet and guardrails as a failsafe if they can't figure it out. Solutions-based, scalable, and always looking for the most efficient path.
+My thought process was: dissect the problem first, automate what you can, then bring in AI with guardrails and a failsafe. Solutions-based, scalable, and always looking for the most efficient path.
 
 ## Findings
 
