@@ -1,6 +1,8 @@
 # Browser Navigation Challenge Bot
 
-Three agents that solve all 30 levels of the browser challenge:
+Three agents that solve all 30 levels of the browser challenge.
+
+![Dashboard Screenshot](dashboard-screenshot.png)
 
 | Agent | How it works | Cost |
 |-------|--------------|------|

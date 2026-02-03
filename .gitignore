@@ -1,4 +1,5 @@
 *.png
+!dashboard-screenshot.png
 *.json
 *.mov
 .env
