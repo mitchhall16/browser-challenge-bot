@@ -76,3 +76,5 @@ My thought process was: dissect the problem first, automate what you can, then b
 Based in Livermore, CA. Started using Claude on January 3rd of this year and haven't stopped building since — I won't go to sleep until the project's done.
 
 Some recent projects: bought a $30 drone off Amazon and got it streaming video and controlled entirely from my computer. Doesn't fly very well but the fact that I can do that is still insanely cool. This challenge was the same kind of fun — couldn't put it down until it was cracked.
+
+[LinkedIn](https://www.linkedin.com/in/mitchellphall)
