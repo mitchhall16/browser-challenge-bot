@@ -200,7 +200,10 @@
     </div>
 
     <input type="file" id="fileInput" accept=".json" style="display:none" onchange="handleFile(event)">
-    <button class="add-run-btn" onclick="document.getElementById('fileInput').click()">Load Run (JSON)</button>
+    <div style="position:fixed;bottom:30px;right:30px;display:flex;gap:10px;">
+        <button class="add-run-btn" style="background:#ff4444;position:static;" onclick="if(confirm('Clear all runs?')){localStorage.removeItem('botRuns');location.reload();}">Clear All</button>
+        <button class="add-run-btn" style="position:static;" onclick="document.getElementById('fileInput').click()">Load Run (JSON)</button>
+    </div>
 
     <script>
         let runs = JSON.parse(localStorage.getItem('botRuns') || '[]');
