@@ -322,10 +322,19 @@ def save_results():
         ]
     }
 
-    with open("run-results.json", "w") as f:
+    import os
+    results_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "run-results.json")
+    with open(results_path, "w") as f:
         json.dump(results, f, indent=2)
 
-    print("\nResults saved to: run-results.json")
+    print(f"\n{'='*50}")
+    print("RESULTS SAVED")
+    print(f"{'='*50}")
+    print(f"File: {results_path}")
+    print(f"\nView in dashboard:")
+    print(f"  https://mitchhall16.github.io/browser-challenge-bot/dashboard.html")
+    print(f"\nClick 'Load Run (JSON)' and select your run-results.json")
+    print(f"{'='*50}")
 
 
 if __name__ == "__main__":
