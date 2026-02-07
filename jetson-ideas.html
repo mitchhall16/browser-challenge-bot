@@ -1152,6 +1152,181 @@ python3 resume_bot.py --batch job_urls.txt
             </div>
         </div>
 
+        <!-- CURATION / REPOST ENGINE -->
+        <div class="project" style="border: 1px solid rgba(170,100,255,0.3);">
+            <div class="project-head">
+                <div class="project-icon">📲</div>
+                <div class="project-title">
+                    <h2>TikTok Curation Engine — Clip, Remix, Post</h2>
+                    <div class="tags">
+                        <span class="tag money">Revenue</span>
+                        <span class="tag auto">Automated</span>
+                        <span class="tag growth">TikTok / IG</span>
+                    </div>
+                </div>
+                <span class="difficulty beginner">Beginner</span>
+            </div>
+            <p>Curate clips from other creators, add your own captions/voiceover/branding, and repost as compilations.
+               This is how most big TikTok pages work — they're not filming anything, they're curating.
+               The Jetson automates finding clips, editing, captioning, and scheduling.</p>
+
+            <h3 style="color:#fff; margin: 16px 0 8px; font-size: 1rem;">How the Big Pages Actually Work</h3>
+            <div class="how-it-works" style="margin-bottom: 16px;">
+                <strong>The formula:</strong><br>
+                &nbsp;&nbsp;1. Find trending/viral clips in your niche<br>
+                &nbsp;&nbsp;2. Download them<br>
+                &nbsp;&nbsp;3. Add value — captions, text overlay, voiceover, compilation, reaction, commentary<br>
+                &nbsp;&nbsp;4. Post consistently (3-5x/day)<br>
+                &nbsp;&nbsp;5. Grow followers → monetize<br><br>
+
+                <strong>Niches that crush with curated content:</strong><br>
+                &nbsp;&nbsp;- <strong>Satisfying videos</strong> — pressure washing, slime, food cutting, restocking<br>
+                &nbsp;&nbsp;- <strong>Fails / funny clips</strong> — compilations with captions<br>
+                &nbsp;&nbsp;- <strong>Motivation / self-improvement</strong> — speech clips + text overlay<br>
+                &nbsp;&nbsp;- <strong>Sports highlights</strong> — game clips with commentary text<br>
+                &nbsp;&nbsp;- <strong>Car / luxury content</strong> — repost exotic car clips, add specs overlay<br>
+                &nbsp;&nbsp;- <strong>Animals / pets</strong> — funny animal compilations<br>
+                &nbsp;&nbsp;- <strong>Finance / hustle</strong> — clip podcast moments + add key takeaway text<br>
+                &nbsp;&nbsp;- <strong>Gaming clips</strong> — clutch moments, fails, funny reactions<br>
+                &nbsp;&nbsp;- <strong>True crime / storytime</strong> — narrate over stock footage or reddit posts<br>
+                &nbsp;&nbsp;- <strong>AI / tech</strong> — demo cool AI tools with screen recordings
+            </div>
+
+            <h3 style="color:#fff; margin: 16px 0 8px; font-size: 1rem;">Roadmap — Automate the Whole Thing</h3>
+
+            <div class="how-it-works" style="margin-bottom: 16px;">
+                <strong style="color:#00ff88;">Phase 1: Source Clips (Jetson scrapes for you)</strong><br><br>
+
+                <strong>Where to find clips:</strong><br>
+                &nbsp;&nbsp;- <strong>TikTok</strong> — search trending sounds, hashtags, For You page<br>
+                &nbsp;&nbsp;- <strong>Instagram Reels</strong> — explore page, niche hashtags<br>
+                &nbsp;&nbsp;- <strong>YouTube Shorts</strong> — trending tab, niche channels<br>
+                &nbsp;&nbsp;- <strong>Reddit</strong> — r/oddlysatisfying, r/funny, r/sports, niche subreddits<br>
+                &nbsp;&nbsp;- <strong>Twitter/X</strong> — viral clips surface here first<br><br>
+
+                <strong>Jetson automation:</strong><br>
+                &nbsp;&nbsp;- Python script monitors trending hashtags + sounds in your niche<br>
+                &nbsp;&nbsp;- <strong>yt-dlp</strong> downloads clips automatically (works for TikTok, IG, YouTube, Twitter)<br>
+                &nbsp;&nbsp;- gemma3 watches the clips (vision) and scores them: "Is this entertaining? 1-10"<br>
+                &nbsp;&nbsp;- Filters out low-quality or duplicate content<br>
+                &nbsp;&nbsp;- Saves the best clips to <code>~/clips/inbox/</code><br><br>
+
+                <strong>Daily haul:</strong> Script runs every few hours, grabs 50-100 clips, AI filters to top 10-20.
+            </div>
+
+            <div class="how-it-works" style="margin-bottom: 16px;">
+                <strong style="color:#00ff88;">Phase 2: Add Value — What Makes It Yours</strong><br><br>
+
+                <strong>You can NOT just repost raw clips</strong> — TikTok suppresses exact reposts and you'll get flagged.
+                You need to add something. Here's what works:<br><br>
+
+                <strong>Option A: Auto-Caption / Subtitle (easiest, biggest impact)</strong><br>
+                &nbsp;&nbsp;- Run <strong>Whisper</strong> on the Jetson to transcribe the audio<br>
+                &nbsp;&nbsp;- <strong>FFmpeg</strong> burns the captions onto the video as animated text<br>
+                &nbsp;&nbsp;- This alone makes videos perform 40-80% better (most people watch on mute)<br>
+                &nbsp;&nbsp;- Fully automated: clip in → captioned clip out<br><br>
+
+                <strong>Option B: Commentary / Text Overlay</strong><br>
+                &nbsp;&nbsp;- gemma3 watches the clip and generates a hook: "Wait for it..." / "He didn't see that coming"<br>
+                &nbsp;&nbsp;- Python + FFmpeg adds text at the top or bottom of the video<br>
+                &nbsp;&nbsp;- Can also add emoji reactions, arrows, circles highlighting things<br><br>
+
+                <strong>Option C: Compilations</strong><br>
+                &nbsp;&nbsp;- Stitch 5-8 clips together into a compilation (FFmpeg concat)<br>
+                &nbsp;&nbsp;- Add transitions, a consistent intro/outro watermark<br>
+                &nbsp;&nbsp;- "Top 10 satisfying videos this week" — one video, 10 clips, 60 seconds<br><br>
+
+                <strong>Option D: AI Voiceover</strong><br>
+                &nbsp;&nbsp;- gemma3 writes narration script based on the video content<br>
+                &nbsp;&nbsp;- <strong>Piper TTS</strong> generates voiceover locally on the Jetson<br>
+                &nbsp;&nbsp;- FFmpeg mixes voiceover with background music + the clip<br>
+                &nbsp;&nbsp;- Great for storytime / explainer / "Did you know?" content<br><br>
+
+                <strong>Option E: Reddit Story Format</strong><br>
+                &nbsp;&nbsp;- Scrape top Reddit posts (Python + Reddit API)<br>
+                &nbsp;&nbsp;- gemma3 rewrites the post as a script<br>
+                &nbsp;&nbsp;- Piper TTS reads it out loud<br>
+                &nbsp;&nbsp;- Background: Minecraft parkour / Subway Surfers gameplay (classic TikTok formula)<br>
+                &nbsp;&nbsp;- This format alone has built accounts with millions of followers
+            </div>
+
+            <div class="how-it-works" style="margin-bottom: 16px;">
+                <strong style="color:#00ff88;">Phase 3: Auto-Edit Pipeline (the money move)</strong><br><br>
+
+                <strong>The fully automated pipeline on the Jetson:</strong><br><br>
+
+                &nbsp;&nbsp;1. <strong>Scrape</strong> — yt-dlp grabs trending clips every 4 hours<br>
+                &nbsp;&nbsp;2. <strong>Filter</strong> — gemma3 vision scores each clip for quality/entertainment<br>
+                &nbsp;&nbsp;3. <strong>Transcribe</strong> — Whisper generates subtitles<br>
+                &nbsp;&nbsp;4. <strong>Caption</strong> — FFmpeg burns subtitles + adds hook text at top<br>
+                &nbsp;&nbsp;5. <strong>Brand</strong> — Add your watermark/handle in the corner<br>
+                &nbsp;&nbsp;6. <strong>Export</strong> — 1080x1920 at 30fps, optimized for TikTok<br>
+                &nbsp;&nbsp;7. <strong>Queue</strong> — drops finished videos into <code>~/content/ready/</code><br><br>
+
+                <strong>Time per video:</strong> ~2-3 min total (Whisper ~30s, FFmpeg ~30s, gemma3 ~30s, export ~30s)<br>
+                <strong>Overnight batch:</strong> 50+ videos ready by morning<br><br>
+
+                <strong>All you do:</strong> review the queue, pick the best 3-5, post them. 10 min of your time per day.
+            </div>
+
+            <div class="how-it-works" style="margin-bottom: 16px;">
+                <strong style="color:#00ff88;">Phase 4: Posting Strategy</strong><br><br>
+
+                <strong>The numbers game:</strong><br>
+                &nbsp;&nbsp;- Post <strong>3-5 times per day</strong> minimum<br>
+                &nbsp;&nbsp;- Best times: 7-9 AM, 12-2 PM, 7-10 PM (your audience's timezone)<br>
+                &nbsp;&nbsp;- First 3 seconds = everything. Best hook text or moment first.<br>
+                &nbsp;&nbsp;- Use 3-5 relevant hashtags, not 30 random ones<br>
+                &nbsp;&nbsp;- Cross-post to IG Reels, YouTube Shorts, Facebook Reels (same video, 4 platforms)<br><br>
+
+                <strong>Growth timeline (realistic):</strong><br>
+                &nbsp;&nbsp;- <strong>Week 1-2:</strong> 0-500 followers. Mostly silence. Keep posting.<br>
+                &nbsp;&nbsp;- <strong>Month 1:</strong> 1K-5K followers if you're consistent (3-5x/day)<br>
+                &nbsp;&nbsp;- <strong>Month 2-3:</strong> 5K-20K. A few videos pop. You find what works.<br>
+                &nbsp;&nbsp;- <strong>Month 3-6:</strong> 20K-100K. Algorithm starts pushing you regularly.<br>
+                &nbsp;&nbsp;- <strong>Month 6+:</strong> 100K+. Brand deals, creator fund, real money.<br><br>
+
+                <strong>Key insight:</strong> It's a volume game. Out of 100 videos, 5 will do numbers.
+                You can't predict which 5. So post as much as possible and let the algorithm pick winners.
+                The Jetson makes volume free.
+            </div>
+
+            <div class="how-it-works" style="margin-bottom: 16px;">
+                <strong style="color:#00ff88;">Phase 5: Monetize</strong><br><br>
+
+                &nbsp;&nbsp;- <strong>TikTok Creator Fund / Creativity Program:</strong> $0.50-$1 per 1K views (need 10K followers)<br>
+                &nbsp;&nbsp;- <strong>Brand deals:</strong> $200-2000 per sponsored post at 50K-500K followers<br>
+                &nbsp;&nbsp;- <strong>Affiliate links:</strong> "Link in bio" to Amazon products related to your niche<br>
+                &nbsp;&nbsp;- <strong>Sell your own product:</strong> merch, digital downloads, courses<br>
+                &nbsp;&nbsp;- <strong>Grow multiple accounts:</strong> Jetson runs the same pipeline for 5 different niches simultaneously<br>
+                &nbsp;&nbsp;- <strong>Sell the service:</strong> Other creators pay you to auto-caption and edit their content
+            </div>
+
+            <h3 style="color:#fff; margin: 16px 0 8px; font-size: 1rem;">Tech Stack</h3>
+            <div class="how-it-works">
+                <strong>Everything runs on the Jetson:</strong><br>
+                &nbsp;&nbsp;- <strong>yt-dlp</strong> — download clips from any platform<br>
+                &nbsp;&nbsp;- <strong>Whisper</strong> — transcribe audio to text (local, free)<br>
+                &nbsp;&nbsp;- <strong>gemma3:4b</strong> — score clips, write hooks, generate captions, write scripts<br>
+                &nbsp;&nbsp;- <strong>Piper TTS</strong> — AI voiceover (local, free)<br>
+                &nbsp;&nbsp;- <strong>FFmpeg</strong> — video editing, subtitle burning, compilation stitching, watermarks<br>
+                &nbsp;&nbsp;- <strong>Pillow</strong> — thumbnail generation, text overlays on images<br>
+                &nbsp;&nbsp;- <strong>cron</strong> — schedule everything to run automatically<br>
+                &nbsp;&nbsp;- <strong>Python</strong> — glue it all together<br><br>
+
+                <strong>Cost: $0.</strong> Everything is open source. Runs 24/7 on the Jetson you already have.
+            </div>
+
+            <div class="stack">
+                <span class="stack-item">yt-dlp</span>
+                <span class="stack-item">Whisper (transcription)</span>
+                <span class="stack-item">gemma3:4b (AI brain)</span>
+                <span class="stack-item">Piper TTS (voiceover)</span>
+                <span class="stack-item">FFmpeg (video editing)</span>
+                <span class="stack-item">Python + cron</span>
+            </div>
+        </div>
+
         <!-- ============================== -->
         <div class="section-divider">Browser Automation (Your Expertise)</div>
         <!-- ============================== -->
