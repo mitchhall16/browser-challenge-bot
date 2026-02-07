@@ -725,6 +725,164 @@ FLAGGED: 2 items need stairwell, 1 item may need disassembly</pre>
         </div>
 
         <!-- ============================================ -->
+        <!-- KINECT + TELLO COMBINED -->
+        <!-- ============================================ -->
+        <div class="section-divider">Combined: Room Scan + Drone Navigation</div>
+
+        <div class="project highlight">
+            <div class="project-head">
+                <div class="project-icon">🗺️</div>
+                <div class="project-title">
+                    <h2>Indoor Drone Navigation with 3D Room Map</h2>
+                    <div class="tags">
+                        <span class="tag vision">Vision</span>
+                        <span class="tag ai">SLAM</span>
+                        <span class="tag auto">Autonomous</span>
+                        <span class="tag hardware">Hardware</span>
+                    </div>
+                </div>
+                <span class="difficulty advanced">Advanced</span>
+            </div>
+            <p>Scan your space with the Kinect to build a 3D map with room boundaries, furniture, and landmarks.
+               Then the Tello flies inside that map — it knows where walls are, where obstacles are, which room it's in,
+               and where everything is. A web dashboard shows the drone moving through the 3D scan in real-time.</p>
+
+            <h3 style="color:#fff; margin: 16px 0 8px; font-size: 1rem;">How It Works</h3>
+            <div class="info-box">
+                <strong>Step 1: Kinect Scans the Space</strong><br>
+                &nbsp;&nbsp;Walk through every room with the Kinect. Capture depth + RGB data.<br>
+                &nbsp;&nbsp;Jetson builds a full 3D mesh with room segmentation.<br><br>
+
+                <strong>Step 2: Define Rooms & Landmarks</strong><br>
+                &nbsp;&nbsp;The scan automatically identifies room boundaries by detecting walls and doorways.<br>
+                &nbsp;&nbsp;You can also place <strong>visual markers</strong> (ArUco tags, colored tape, printed QR codes) at key spots.<br>
+                &nbsp;&nbsp;Each room gets a label: "Living Room", "Kitchen", "Hallway", etc.<br>
+                &nbsp;&nbsp;Objects detected by YOLO get pinned to the map: "Couch at (3.2, 1.1)", "TV at (5.8, 2.4)"<br><br>
+
+                <strong>Step 3: Tello Flies with Map Awareness</strong><br>
+                &nbsp;&nbsp;Tello streams video to Jetson over WiFi (720p @ 30fps).<br>
+                &nbsp;&nbsp;Jetson matches what the Tello sees against the 3D map in real-time.<br>
+                &nbsp;&nbsp;Drone knows: "I'm in the living room, 4ft from the couch, 2ft above the floor, facing the TV."<br><br>
+
+                <strong>Step 4: Live Web Dashboard</strong><br>
+                &nbsp;&nbsp;Three.js renders the 3D room scan in your browser.<br>
+                &nbsp;&nbsp;A dot/icon shows the drone's position updating in real-time as it moves.<br>
+                &nbsp;&nbsp;Click anywhere on the map → drone flies there autonomously.
+            </div>
+
+            <h3 style="color:#fff; margin: 16px 0 8px; font-size: 1rem;">Room Identification — How the Drone Knows Where It Is</h3>
+            <div class="info-box">
+                <strong>Method 1: Visual Landmark Matching (no markers needed)</strong><br>
+                &nbsp;&nbsp;The Kinect scan captures what every room looks like from every angle.<br>
+                &nbsp;&nbsp;Tello camera feed → Jetson runs feature matching (ORB/SuperPoint) against the scan data.<br>
+                &nbsp;&nbsp;Matches visual features to a known location on the map. Works like indoor GPS.<br>
+                &nbsp;&nbsp;<strong>Accuracy:</strong> ~6-12 inches. Good enough for room identification and rough positioning.<br><br>
+
+                <strong>Method 2: ArUco Markers (precise positioning)</strong><br>
+                &nbsp;&nbsp;Print small ArUco tags (like QR codes) and stick them on walls/doorframes.<br>
+                &nbsp;&nbsp;Each tag has a unique ID mapped to an exact (x, y, z) coordinate on your scan.<br>
+                &nbsp;&nbsp;When the Tello sees a tag, it instantly knows its exact position + orientation.<br>
+                &nbsp;&nbsp;<strong>Accuracy:</strong> ~1-2 inches. Fast, reliable, costs nothing (just print and tape).<br><br>
+
+                <strong>Method 3: Room Geometry Fingerprinting</strong><br>
+                &nbsp;&nbsp;Each room has a unique shape — ceiling height, wall angles, doorway positions.<br>
+                &nbsp;&nbsp;Tello's downward camera + barometer + IMU gives rough positioning.<br>
+                &nbsp;&nbsp;Jetson compares visible geometry to the scan: "This ceiling height + wall distance = Kitchen."<br>
+                &nbsp;&nbsp;<strong>Accuracy:</strong> Room-level (knows which room, not exact spot). Great as a fallback.<br><br>
+
+                <strong>Best approach: Combine all three.</strong><br>
+                &nbsp;&nbsp;ArUco tags at doorways and corners for precise anchor points.<br>
+                &nbsp;&nbsp;Visual matching fills in between tags.<br>
+                &nbsp;&nbsp;Room geometry as a sanity check / fallback.<br>
+                &nbsp;&nbsp;Result: the drone always knows which room it's in and roughly where in that room.
+            </div>
+
+            <h3 style="color:#fff; margin: 16px 0 8px; font-size: 1rem;">Object Awareness on the Map</h3>
+            <div class="info-box">
+                &nbsp;&nbsp;During the Kinect scan, YOLO detects and labels every object:<br><br>
+
+                &nbsp;&nbsp;📍 <strong>Living Room:</strong> Couch (84"x36") at (3.2, 1.1) | TV (55") at (5.8, 2.4) | Coffee table at (4.0, 1.8)<br>
+                &nbsp;&nbsp;📍 <strong>Kitchen:</strong> Table (60"x36") at (1.5, 3.2) | Fridge at (0.2, 4.1) | Microwave at (2.8, 4.0)<br>
+                &nbsp;&nbsp;📍 <strong>Bedroom:</strong> Bed (king) at (2.0, 1.5) | Dresser at (0.3, 0.8) | Nightstand at (3.8, 1.2)<br><br>
+
+                &nbsp;&nbsp;All of this shows up on the 3D web dashboard. When the drone flies near an object,<br>
+                &nbsp;&nbsp;it highlights on the map. You can tell the drone: "Go to the couch" and it knows exactly where that is.<br><br>
+
+                &nbsp;&nbsp;<strong>Obstacle avoidance:</strong> The drone has a "no-fly zone" around every object. It routes around<br>
+                &nbsp;&nbsp;furniture instead of through it. Doorways become waypoints — it navigates room to room through doors.
+            </div>
+
+            <h3 style="color:#fff; margin: 16px 0 8px; font-size: 1rem;">Web Dashboard</h3>
+            <div class="info-box">
+                <strong>What you see in the browser:</strong><br><br>
+
+                &nbsp;&nbsp;🖥️ <strong>3D Room View:</strong> Full Three.js render of your scanned space. Rotate, zoom, pan.<br>
+                &nbsp;&nbsp;✈️ <strong>Drone Icon:</strong> Real-time position + heading updating as it flies.<br>
+                &nbsp;&nbsp;📹 <strong>Live Camera Feed:</strong> Picture-in-picture of what the drone sees.<br>
+                &nbsp;&nbsp;🏷️ <strong>Object Labels:</strong> Furniture items labeled and clickable on the map.<br>
+                &nbsp;&nbsp;🚪 <strong>Room Zones:</strong> Color-coded room boundaries (green = living room, blue = bedroom, etc.)<br>
+                &nbsp;&nbsp;📊 <strong>Telemetry:</strong> Battery, altitude, speed, current room, distance to nearest obstacle.<br><br>
+
+                <strong>Controls:</strong><br>
+                &nbsp;&nbsp;- Click on the map → drone flies to that point<br>
+                &nbsp;&nbsp;- "Go to kitchen" → drone navigates through doorways to the kitchen<br>
+                &nbsp;&nbsp;- "Patrol" → drone visits every room in a loop<br>
+                &nbsp;&nbsp;- "Return home" → drone flies back to launch point and lands<br>
+                &nbsp;&nbsp;- Manual override with WASD / arrow keys
+            </div>
+
+            <h3 style="color:#fff; margin: 16px 0 8px; font-size: 1rem;">Build Order</h3>
+            <div class="info-box">
+                <strong>Phase 1 — Scan your room (Kinect arrives tomorrow):</strong><br>
+                &nbsp;&nbsp;- Capture depth data with Kinect + laptop (libfreenect + Open3D)<br>
+                &nbsp;&nbsp;- Build 3D mesh on the Jetson<br>
+                &nbsp;&nbsp;- Run YOLO to detect and label objects on the mesh<br><br>
+
+                <strong>Phase 2 — Tello basic control:</strong><br>
+                &nbsp;&nbsp;- Connect Tello via WiFi, fly with djitellopy Python SDK<br>
+                &nbsp;&nbsp;- Stream video to Jetson, verify frame rate + latency<br>
+                &nbsp;&nbsp;- Manual control from a web page (Flask + WebSocket)<br><br>
+
+                <strong>Phase 3 — Position tracking:</strong><br>
+                &nbsp;&nbsp;- Print and place ArUco markers at room boundaries<br>
+                &nbsp;&nbsp;- Tello sees marker → Jetson calculates position on the map<br>
+                &nbsp;&nbsp;- Show drone position on the 3D web dashboard<br><br>
+
+                <strong>Phase 4 — Autonomous navigation:</strong><br>
+                &nbsp;&nbsp;- A* pathfinding on the 3D mesh (avoiding furniture)<br>
+                &nbsp;&nbsp;- Doorway detection as navigation waypoints<br>
+                &nbsp;&nbsp;- "Go to kitchen" → plans route through rooms → executes flight<br><br>
+
+                <strong>Phase 5 — Full dashboard + patrol mode:</strong><br>
+                &nbsp;&nbsp;- Click-to-fly on the 3D map<br>
+                &nbsp;&nbsp;- Automated patrol routes<br>
+                &nbsp;&nbsp;- Object change detection (something moved since last scan)
+            </div>
+
+            <h3 style="color:#fff; margin: 16px 0 8px; font-size: 1rem;">What You Need</h3>
+            <table class="parts-table">
+                <tr><th>Part</th><th>Status</th><th>Price</th></tr>
+                <tr><td>Jetson Orin Nano Super</td><td style="color:#ffcc00;">Ordered</td><td>$249</td></tr>
+                <tr><td>Xbox 360 Kinect + USB adapter</td><td style="color:#ffcc00;">Ordered</td><td>$15-25</td></tr>
+                <tr><td>DJI Tello (Boost Combo w/ 3 batteries)</td><td style="color:#00d4ff;">Found on eBay</td><td>$135</td></tr>
+                <tr><td>ArUco markers (print at home)</td><td style="color:#00ff88;">Free</td><td>$0</td></tr>
+                <tr><td>128GB microSD</td><td style="color:#ffcc00;">Ordered</td><td>$12</td></tr>
+                <tr class="total"><td colspan="2">Total</td><td>~$410-420</td></tr>
+            </table>
+
+            <div class="stack">
+                <span class="stack-item">Kinect + libfreenect (scanning)</span>
+                <span class="stack-item">Open3D (3D mesh)</span>
+                <span class="stack-item">YOLOv8 (object detection)</span>
+                <span class="stack-item">djitellopy (drone control)</span>
+                <span class="stack-item">OpenCV + ArUco (positioning)</span>
+                <span class="stack-item">Three.js (web 3D dashboard)</span>
+                <span class="stack-item">Flask + WebSocket (backend)</span>
+                <span class="stack-item">A* pathfinding (navigation)</span>
+            </div>
+        </div>
+
+        <!-- ============================================ -->
         <!-- OTHER ROBOT PROJECTS -->
         <!-- ============================================ -->
         <div class="section-divider">More Robot / Autonomy Projects</div>
