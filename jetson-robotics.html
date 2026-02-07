@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jetson Orin Nano — Robotics & Hardware Projects</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            color: #e0e0e0;
+            padding: 40px 20px;
+        }
+        .container { max-width: 940px; margin: 0 auto; }
+        h1 {
+            text-align: center;
+            font-size: 2.2rem;
+            margin-bottom: 8px;
+            background: linear-gradient(90deg, #ff4444, #ff8844, #ffcc00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .subtitle { text-align: center; color: #888; margin-bottom: 40px; font-size: 0.95rem; }
+
+        .project {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 28px;
+            margin-bottom: 24px;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .project.highlight { border: 1px solid rgba(0,212,255,0.3); }
+        .project-head {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            margin-bottom: 14px;
+        }
+        .project-icon {
+            font-size: 1.6rem;
+            width: 44px; height: 44px;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(255,255,255,0.07);
+            border-radius: 12px;
+            flex-shrink: 0;
+        }
+        .project-title { flex: 1; }
+        .project-title h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+        .project-title .tags { display: flex; gap: 6px; flex-wrap: wrap; }
+        .tag {
+            padding: 2px 10px; border-radius: 10px; font-size: 0.7rem;
+            font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px;
+        }
+        .tag.vision { background: rgba(0,212,255,0.15); color: #00d4ff; }
+        .tag.auto { background: rgba(0,255,136,0.15); color: #00ff88; }
+        .tag.hardware { background: rgba(255,136,68,0.15); color: #ff8844; }
+        .tag.ai { background: rgba(170,100,255,0.15); color: #aa64ff; }
+        .tag.easy { background: rgba(255,204,0,0.15); color: #ffcc00; }
+
+        .difficulty {
+            padding: 2px 10px; border-radius: 10px; font-size: 0.7rem;
+            font-weight: 600; white-space: nowrap; height: fit-content;
+        }
+        .difficulty.beginner { background: rgba(0,255,136,0.12); color: #00ff88; }
+        .difficulty.intermediate { background: rgba(255,204,0,0.12); color: #ffcc00; }
+        .difficulty.advanced { background: rgba(255,68,68,0.12); color: #ff6666; }
+
+        .project p { color: #bbb; line-height: 1.6; margin-bottom: 10px; font-size: 0.92rem; }
+        .project p strong { color: #fff; }
+
+        .info-box {
+            background: rgba(0,0,0,0.3);
+            border-radius: 10px;
+            padding: 16px;
+            margin: 14px 0;
+            font-size: 0.85rem;
+            line-height: 1.7;
+            color: #aaa;
+        }
+        .info-box strong { color: #00d4ff; }
+        .info-box .warn { color: #ff8844; }
+
+        .parts-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 14px 0;
+            font-size: 0.85rem;
+        }
+        .parts-table th {
+            text-align: left;
+            padding: 8px 12px;
+            color: #00d4ff;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .parts-table td {
+            padding: 8px 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+            color: #ccc;
+        }
+        .parts-table td:last-child { color: #00ff88; font-weight: 600; text-align: right; }
+        .parts-table tr.total td {
+            border-top: 2px solid rgba(0,255,136,0.3);
+            color: #00ff88;
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+        .parts-table .note { font-size: 0.75rem; color: #888; }
+        .parts-table a { color: #00d4ff; text-decoration: none; }
+        .parts-table a:hover { text-decoration: underline; }
+
+        .stack {
+            display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px;
+        }
+        .stack-item {
+            background: rgba(255,255,255,0.06);
+            padding: 3px 10px; border-radius: 6px;
+            font-size: 0.75rem; color: #999;
+        }
+
+        .section-divider {
+            text-align: center; color: #444; font-size: 0.8rem;
+            text-transform: uppercase; letter-spacing: 2px;
+            margin: 36px 0 24px; position: relative;
+        }
+        .section-divider::before, .section-divider::after {
+            content: ''; position: absolute; top: 50%; width: 30%; height: 1px;
+            background: rgba(255,255,255,0.08);
+        }
+        .section-divider::before { left: 0; }
+        .section-divider::after { right: 0; }
+
+        code {
+            background: rgba(0,212,255,0.1); color: #00d4ff;
+            padding: 2px 7px; border-radius: 4px; font-size: 0.82rem;
+            font-family: 'SF Mono', Monaco, monospace;
+        }
+        pre {
+            background: rgba(0,0,0,0.4); border-radius: 8px; padding: 16px;
+            overflow-x: auto; margin: 12px 0; font-size: 0.82rem;
+            line-height: 1.5; color: #ccc; font-family: 'SF Mono', Monaco, monospace;
+        }
+
+        .catch-box {
+            background: rgba(255,136,68,0.08);
+            border: 1px solid rgba(255,136,68,0.2);
+            border-radius: 12px;
+            padding: 18px;
+            margin: 16px 0;
+        }
+        .catch-box h3 { color: #ff8844; font-size: 0.95rem; margin-bottom: 8px; }
+
+        .footer {
+            text-align: center; color: #444; font-size: 0.8rem;
+            margin-top: 50px; padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.06);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Jetson Orin Nano — Robotics & Hardware</h1>
+        <p class="subtitle">Autonomous drones, 3D scanning, smart cameras, robots</p>
+
+        <!-- ============================================ -->
+        <!-- 3D ROOM SCANNER -->
+        <!-- ============================================ -->
+        <div class="section-divider">3D Scanning & Spatial AI</div>
+
+        <div class="project highlight">
+            <div class="project-head">
+                <div class="project-icon">📐</div>
+                <div class="project-title">
+                    <h2>3D Room Scanner & Object Mapper</h2>
+                    <div class="tags">
+                        <span class="tag vision">Vision</span>
+                        <span class="tag ai">AI</span>
+                        <span class="tag easy">Approachable</span>
+                    </div>
+                </div>
+                <span class="difficulty intermediate">Intermediate</span>
+            </div>
+            <p>Scan a room with a camera or depth sensor. The Jetson builds a full 3D model with accurate dimensions,
+               identifies every object (couch, table, TV), and can generate a 2D floor plan blueprint.
+               Then visualize how those objects would look placed in a different room.</p>
+
+            <div class="info-box">
+                <strong>How it works — three approaches:</strong><br><br>
+
+                <strong>Option A: Phone Camera (cheapest)</strong><br>
+                &nbsp;&nbsp;1. Record a video walking around the room with your phone<br>
+                &nbsp;&nbsp;2. Transfer video to Jetson (AirDrop, USB, network share)<br>
+                &nbsp;&nbsp;3. Jetson runs COLMAP or Gaussian Splatting — extracts frames, matches features, builds 3D mesh<br>
+                &nbsp;&nbsp;4. YOLOv8 identifies objects in the scene<br>
+                &nbsp;&nbsp;5. Output: 3D model (.OBJ/.PLY) + object list with estimated dimensions<br>
+                &nbsp;&nbsp;Accuracy: ~1-2 inches. Good enough for furniture placement, not for construction.<br><br>
+
+                <strong>Option B: Xbox Kinect (best value)</strong><br>
+                &nbsp;&nbsp;1. Plug Kinect into laptop via USB<br>
+                &nbsp;&nbsp;2. Use libfreenect / Open3D to capture RGB + depth frames as you walk around<br>
+                &nbsp;&nbsp;3. Transfer point cloud data to Jetson<br>
+                &nbsp;&nbsp;4. Jetson builds mesh, detects objects, extracts measurements<br>
+                &nbsp;&nbsp;5. Output: 3D model with millimeter-accurate depth + floor plan<br>
+                &nbsp;&nbsp;Accuracy: ~5-10mm. Good enough for blueprints.<br><br>
+
+                <strong>Option C: Depth Camera direct to Jetson (real-time)</strong><br>
+                &nbsp;&nbsp;1. Plug Intel RealSense D435 into Jetson via USB<br>
+                &nbsp;&nbsp;2. Walk around — Jetson builds 3D map in real-time (RTAB-Map SLAM)<br>
+                &nbsp;&nbsp;3. Live object detection as you scan<br>
+                &nbsp;&nbsp;4. Output: real-time 3D mesh updating as you move<br>
+                &nbsp;&nbsp;Accuracy: ~2-5mm. Best quality, fully live.
+            </div>
+
+            <h3 style="color:#fff; margin: 16px 0 8px; font-size: 1rem;">What You Can Get Out Of It</h3>
+            <div class="info-box">
+                <strong>3D Model:</strong> Full textured mesh of the room. Open in Blender, rotate, zoom, measure anything.<br><br>
+                <strong>Floor Plan Blueprint:</strong> Extract the floor plane from the 3D scan → trace walls → output a 2D floor plan with measurements in feet/inches. Like an architect's blueprint but auto-generated.<br><br>
+                <strong>Object Inventory:</strong> List of every object detected: "Couch: 84" x 36" x 34" at position (3.2, 1.1, 0). Table: 48" x 24" x 30" at position (5.8, 2.4, 0)."<br><br>
+                <strong>AR Placement:</strong> In a new room, overlay scanned objects on the camera feed to see how they'd look. "Would my couch fit in this corner?" — see it in real-time before moving anything.<br><br>
+                <strong>Gaussian Splat:</strong> The coolest output — a photorealistic 3D capture you can fly through smoothly. Not just a mesh but actual captured light. Looks like a video you can move around inside.
+            </div>
+
+            <h3 style="color:#fff; margin: 16px 0 8px; font-size: 1rem;">Parts & Pricing</h3>
+
+            <h4 style="color:#00d4ff; margin: 12px 0 6px; font-size: 0.85rem;">Option A: Phone Camera (you already have this)</h4>
+            <table class="parts-table">
+                <tr><th>Part</th><th>Source</th><th>Price</th></tr>
+                <tr><td>Your phone camera</td><td>Already own</td><td>$0</td></tr>
+                <tr><td>Jetson Orin Nano Super</td><td>Amazon (ordered)</td><td>$249</td></tr>
+                <tr><td>128GB microSD</td><td>Amazon</td><td>$12</td></tr>
+                <tr class="total"><td colspan="2">Total</td><td>$261</td></tr>
+            </table>
+
+            <h4 style="color:#00d4ff; margin: 16px 0 6px; font-size: 0.85rem;">Option B: Xbox Kinect (scan on laptop, process on Jetson)</h4>
+            <table class="parts-table">
+                <tr><th>Part</th><th>Source</th><th>Price</th></tr>
+                <tr>
+                    <td>Xbox 360 Kinect v1<br><span class="note">Infrared depth sensor, 640x480 depth, 30fps</span></td>
+                    <td><a href="https://www.ebay.com" target="_blank">eBay (US sellers)</a></td>
+                    <td>$10-15</td>
+                </tr>
+                <tr>
+                    <td>Kinect USB adapter<br><span class="note">Needed to connect to laptop — Kinect uses a proprietary port</span></td>
+                    <td>Amazon / eBay</td>
+                    <td>$5-10</td>
+                </tr>
+                <tr>
+                    <td><strong>OR</strong> Xbox One Kinect v2<br><span class="note">Better: 1080p RGB + time-of-flight depth, way more accurate</span></td>
+                    <td><a href="https://www.ebay.com" target="_blank">eBay (US sellers)</a></td>
+                    <td>$25-40</td>
+                </tr>
+                <tr>
+                    <td>Kinect v2 USB 3.0 adapter<br><span class="note">Required for PC connection</span></td>
+                    <td>Amazon</td>
+                    <td>$10-15</td>
+                </tr>
+                <tr><td>Jetson Orin Nano Super</td><td>Amazon (ordered)</td><td>$249</td></tr>
+                <tr><td>128GB microSD</td><td>Amazon</td><td>$12</td></tr>
+                <tr class="total"><td colspan="2">Total (with Kinect v1)</td><td>~$280</td></tr>
+                <tr class="total"><td colspan="2">Total (with Kinect v2)</td><td>~$310</td></tr>
+            </table>
+
+            <h4 style="color:#00d4ff; margin: 16px 0 6px; font-size: 0.85rem;">Option C: Intel RealSense (live scanning, best quality)</h4>
+            <table class="parts-table">
+                <tr><th>Part</th><th>Source</th><th>Price</th></tr>
+                <tr>
+                    <td>Intel RealSense D435i<br><span class="note">RGB + infrared depth + IMU. Plugs directly into Jetson USB 3.0</span></td>
+                    <td><a href="https://store.intelrealsense.com" target="_blank">Intel Store</a> / Amazon</td>
+                    <td>$200-250</td>
+                </tr>
+                <tr><td>Jetson Orin Nano Super</td><td>Amazon (ordered)</td><td>$249</td></tr>
+                <tr><td>128GB microSD</td><td>Amazon</td><td>$12</td></tr>
+                <tr class="total"><td colspan="2">Total</td><td>~$460-510</td></tr>
+            </table>
+
+            <div class="catch-box">
+                <h3>The Catch (Being Honest)</h3>
+                <p style="color:#ddd; line-height: 1.7; font-size: 0.85rem;">
+                    <strong style="color:#ff8844;">Mirrors & glass:</strong> Depth sensors can't read reflective surfaces. Mirrors show up as holes in the scan. Cover them or scan around them.<br><br>
+                    <strong style="color:#ff8844;">Plain white walls:</strong> Photogrammetry (phone method) needs visual texture to match features. A completely blank white wall is hard to reconstruct. Depth sensors (Kinect/RealSense) don't have this problem — they use infrared, not visual features.<br><br>
+                    <strong style="color:#ff8844;">Processing time:</strong> A full room scan takes 30-60 minutes to process into a mesh on the Jetson. Not instant. You scan in 5 min, then wait for processing.<br><br>
+                    <strong style="color:#ff8844;">Lighting:</strong> Phone photogrammetry needs decent lighting. Depth sensors work in the dark (infrared). Kinect actually works BETTER in dim rooms.<br><br>
+                    <strong style="color:#ff8844;">Large rooms:</strong> Scanning a whole house requires stitching multiple room scans. Each room works great. Combining them needs careful overlap between rooms (scan through doorways).<br><br>
+                    <strong style="color:#ff8844;">Accuracy expectations:</strong> You WILL get a usable 3D model and floor plan. It WILL be close. But don't expect architectural precision — professional laser scanners ($50K+ devices) exist for a reason. For "will my couch fit in that room?" this is more than good enough.
+                </p>
+            </div>
+
+            <h3 style="color:#fff; margin: 16px 0 8px; font-size: 1rem;">Software Stack (all free & open source)</h3>
+            <div class="info-box">
+                <strong>Scanning & 3D Reconstruction:</strong><br>
+                &nbsp;&nbsp;- <strong>COLMAP</strong> — photogrammetry from phone video/photos → 3D point cloud<br>
+                &nbsp;&nbsp;- <strong>RTAB-Map</strong> — real-time SLAM with depth camera. Best for live scanning on Jetson.<br>
+                &nbsp;&nbsp;- <strong>Nerfstudio</strong> — NeRF-based 3D capture from video. Photorealistic results.<br>
+                &nbsp;&nbsp;- <strong>gsplat / 3D Gaussian Splatting</strong> — newest tech, faster than NeRF, incredible quality<br>
+                &nbsp;&nbsp;- <strong>Open3D</strong> — point cloud processing, mesh generation, visualization<br><br>
+
+                <strong>Object Detection:</strong><br>
+                &nbsp;&nbsp;- <strong>YOLOv8</strong> — identifies objects (couch, table, chair, TV) in real-time<br>
+                &nbsp;&nbsp;- <strong>Segment Anything (SAM)</strong> — precise object boundaries for clean extraction<br>
+                &nbsp;&nbsp;- <strong>TensorRT</strong> — NVIDIA optimizer, makes models 2-3x faster on Jetson<br><br>
+
+                <strong>Floor Plan Generation:</strong><br>
+                &nbsp;&nbsp;- <strong>Open3D</strong> — extract horizontal plane (floor), trace wall boundaries<br>
+                &nbsp;&nbsp;- <strong>OpenCV</strong> — convert 3D wall traces to 2D floor plan with dimensions<br>
+                &nbsp;&nbsp;- <strong>Matplotlib / CairoSVG</strong> — render clean blueprint PDF/SVG output<br><br>
+
+                <strong>Kinect Drivers:</strong><br>
+                &nbsp;&nbsp;- <strong>libfreenect</strong> — Kinect v1 driver (Linux, Mac, Windows)<br>
+                &nbsp;&nbsp;- <strong>libfreenect2</strong> — Kinect v2 driver<br>
+                &nbsp;&nbsp;- <strong>Open3D</strong> has built-in Kinect support — easiest path<br><br>
+
+                <strong>AR Visualization:</strong><br>
+                &nbsp;&nbsp;- <strong>Open3D visualizer</strong> — view 3D models, measure distances<br>
+                &nbsp;&nbsp;- <strong>Three.js</strong> — web-based 3D viewer (view scans in browser from any device)<br>
+                &nbsp;&nbsp;- <strong>Blender</strong> — import meshes, render, animate, modify
+            </div>
+
+            <pre style="color: #00d4ff;">
+# Kinect v1 scanning on laptop:
+pip install open3d
+python3 kinect_scan.py --output room_scan.ply
+
+# Transfer to Jetson:
+scp room_scan.ply jetson@192.168.1.XX:~/scans/
+
+# On Jetson — build mesh + detect objects + generate floor plan:
+python3 room_processor.py --input room_scan.ply --output results/
+# → results/mesh.obj        (3D model)
+# → results/floorplan.pdf   (2D blueprint with dimensions)
+# → results/objects.json    (detected objects with measurements)
+# → results/splat.ply       (Gaussian splat for photorealistic viewing)</pre>
+
+            <div class="stack">
+                <span class="stack-item">COLMAP / RTAB-Map</span>
+                <span class="stack-item">Open3D</span>
+                <span class="stack-item">YOLOv8 + TensorRT</span>
+                <span class="stack-item">Gaussian Splatting</span>
+                <span class="stack-item">Kinect / RealSense / Phone</span>
+            </div>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- MOVING COMPANY PRODUCT -->
+        <!-- ============================================ -->
+        <div class="section-divider">Real Product — Moving Company Tool</div>
+
+        <div class="project" style="border: 1px solid rgba(0,255,136,0.3);">
+            <div class="project-head">
+                <div class="project-icon">🚚</div>
+                <div class="project-title">
+                    <h2>MoveScan — AI Moving Company Assistant</h2>
+                    <div class="tags">
+                        <span class="tag money" style="background:rgba(0,255,136,0.2); color:#00ff88;">Product</span>
+                        <span class="tag vision">3D Scan</span>
+                        <span class="tag ai">AI</span>
+                    </div>
+                </div>
+                <span class="difficulty intermediate">Intermediate</span>
+            </div>
+            <p>A real product for moving companies. Customers scan their apartment with their phone before the move.
+               Crew leads scan building routes (hallways, stairs, elevators, doorways) with a Kinect.
+               The AI generates accurate inventory, dimensions, route clearance warnings, and quotes — solving
+               the biggest pain points in the moving business.</p>
+
+            <h3 style="color:#fff; margin: 16px 0 8px; font-size: 1rem;">The Problems This Solves</h3>
+            <div class="info-box">
+                <strong style="color:#ff4444;">Problem 1: "I just have a few things"</strong><br>
+                Customer says small move. Movers show up to a packed 3-bedroom. Wrong truck, wrong crew size, wrong quote.
+                Company eats the cost difference or has an angry customer.<br><br>
+
+                <strong style="color:#ff4444;">Problem 2: "It'll fit through the door"</strong><br>
+                84" couch doesn't fit through a 30" doorway. 45 minutes wasted trying angles.
+                Sometimes you're hoisting through windows or disassembling. Could've planned ahead.<br><br>
+
+                <strong style="color:#ff4444;">Problem 3: Stairs, elevators, tight corners</strong><br>
+                King mattress won't make the turn on the 3rd floor landing. Piano doesn't fit in the freight elevator.
+                Crew finds out on move day when the clock is running.<br><br>
+
+                <strong style="color:#ff4444;">Problem 4: Bad access / directions</strong><br>
+                "Easy to find" — crew circles the block, can't find service entrance, doesn't know about the freight elevator,
+                no idea which loading dock to use. 20 minutes burned before they even start.<br><br>
+
+                <strong style="color:#ff4444;">Problem 5: Inaccurate quotes</strong><br>
+                Customer describes items over the phone. "A couch" could be a loveseat or an L-shaped sectional.
+                Quote is wrong either way — too low and you lose money, too high and you lose the job.
+            </div>
+
+            <h3 style="color:#fff; margin: 16px 0 8px; font-size: 1rem;">How It Works — Two Scan Types</h3>
+
+            <div class="info-box">
+                <strong style="color:#00ff88; font-size: 1rem;">SCAN 1: Customer Inventory Scan (phone app)</strong><br>
+                <em>Customer does this before the move. Takes 5 minutes.</em><br><br>
+
+                &nbsp;&nbsp;1. Customer opens the app, walks through their apartment recording video<br>
+                &nbsp;&nbsp;2. AI processes the video on the Jetson backend server:<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;- Identifies every piece of furniture automatically<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;- Estimates dimensions from video (within ~2 inches)<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;- Takes a screenshot of each item for the crew<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;- Estimates weight category (light / medium / heavy / 2-person / 4-person)<br>
+                &nbsp;&nbsp;3. Customer reviews the list, adds/removes items, marks "don't move" items<br>
+                &nbsp;&nbsp;4. App generates:<br><br>
+
+                <strong>Inventory Report:</strong><br>
+<pre style="margin: 8px 0; font-size: 0.8rem;">
+MOVE INVENTORY — 742 Oak St Apt 3B
+Generated: Feb 7, 2026
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+LIVING ROOM (4 items)
+  Sectional sofa    92"x36"x34"   Heavy (2-person)  ⚠️ Check doorways
+  Coffee table      48"x24"x18"   Medium (1-person)
+  TV 55" + stand    52"x16"x48"   Medium (2-person, fragile)
+  Floor lamp        —x—x68"      Light (1-person)
+
+BEDROOM (5 items)
+  King bed frame    80"x76"x14"   Heavy (2-person, disassemble)
+  King mattress     80"x76"x12"   Heavy (2-person)  ⚠️ Check stairwell
+  Dresser           62"x20"x34"   Heavy (2-person)
+  Nightstand x2     24"x18"x26"   Light (1-person each)
+
+KITCHEN (3 items)
+  Dining table      60"x36"x30"   Medium (2-person)
+  Chairs x4         18"x18"x36"   Light (stackable)
+  Microwave cart    24"x18"x36"   Light (1-person)
+
+TOTAL: 12 items | Est. volume: 380 cu ft
+TRUCK: 16' truck minimum (26' recommended with boxes)
+CREW: 3 movers, ~4 hours
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+AUTO-QUOTE: $850 - $1,100</pre>
+            </div>
+
+            <div class="info-box">
+                <strong style="color:#00d4ff; font-size: 1rem;">SCAN 2: Route / Building Scan (crew does once per building)</strong><br>
+                <em>Crew lead walks the path with Kinect or phone. 10 minutes. Save forever.</em><br><br>
+
+                &nbsp;&nbsp;1. Crew lead walks the entire route: parking/loading zone → entrance → elevator/stairs → hallway → apartment door<br>
+                &nbsp;&nbsp;2. Kinect captures depth data for every pinch point<br>
+                &nbsp;&nbsp;3. AI maps the route and measures:<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;- Every doorway width and height<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;- Hallway widths (especially at turns and narrow points)<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;- Stairwell dimensions + landing turning radius<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;- Elevator interior dimensions (width x depth x height)<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;- Loading dock / entrance clearance<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;- Any obstacles (low pipes, fire extinguisher boxes, tight corners)<br>
+                &nbsp;&nbsp;4. Saved to a building database — every future move at this address uses the same route data<br><br>
+
+                <strong>Route Report:</strong><br>
+<pre style="margin: 8px 0; font-size: 0.8rem;">
+ROUTE: 742 Oak St → Apt 3B (3rd floor)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+LOADING ZONE: Street parking, double park OK
+  → 15 ft to front entrance
+
+ENTRANCE: Main door 36"W x 80"H — standard
+  → Hallway to elevator: 48"W, straight shot
+
+ELEVATOR: 54"W x 78"D x 84"H
+  ✅ Dresser (62"x20") — fits diagonally
+  ✅ Dining table (60"x36") — fits standing
+  ⚠️ Sectional (92") — DOES NOT FIT
+  ⚠️ King mattress (80"x76") — DOES NOT FIT
+
+STAIRWELL (backup for oversized items):
+  Width: 42" | Landing turn: 58" clearance
+  ✅ King mattress — fits if tilted on side
+  ⚠️ Sectional (92") — tight at landing turn
+     → RECOMMEND: Disassemble or check if sections separate
+
+3RD FLOOR HALLWAY: 44"W, one 90° turn (62" clearance at turn)
+  ✅ All items clear
+
+APT DOOR: 32"W x 80"H
+  ⚠️ Dresser (62"W) — must go through sideways (20" depth fits 32" door ✅)
+  ⚠️ Sectional — check if pieces fit individually
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+FLAGGED: 2 items need stairwell, 1 item may need disassembly</pre>
+            </div>
+
+            <div class="info-box">
+                <strong style="color:#ffcc00; font-size: 1rem;">MOVE DAY: Crew Gets Everything</strong><br><br>
+
+                &nbsp;&nbsp;Crew opens the app on their phone and gets:<br><br>
+                &nbsp;&nbsp;📋 <strong>Inventory list</strong> with photos + dimensions of every item<br>
+                &nbsp;&nbsp;🗺️ <strong>Route map</strong> with all doorway/hallway/elevator dimensions<br>
+                &nbsp;&nbsp;⚠️ <strong>Clearance warnings</strong> — which items won't fit where<br>
+                &nbsp;&nbsp;📐 <strong>Game plan</strong> — "Take these 10 items via elevator, these 2 via stairs"<br>
+                &nbsp;&nbsp;🔧 <strong>Disassembly flags</strong> — "Bed frame needs Allen wrench, sectional separates into 3 pieces"<br>
+                &nbsp;&nbsp;⏱️ <strong>Time estimate</strong> — based on item count, floor, elevator access<br><br>
+
+                &nbsp;&nbsp;No surprises. No "it won't fit" moments. No wrong truck size.
+            </div>
+
+            <h3 style="color:#fff; margin: 16px 0 8px; font-size: 1rem;">Business Model</h3>
+            <div class="info-box">
+                <strong>Who pays:</strong> The moving company, not the customer.<br><br>
+
+                <strong>Pricing ideas:</strong><br>
+                &nbsp;&nbsp;- <strong>$50-100/month per company</strong> — unlimited scans, building database<br>
+                &nbsp;&nbsp;- <strong>$5-10 per scan</strong> — pay per use, lower commitment<br>
+                &nbsp;&nbsp;- <strong>Free tier:</strong> 5 scans/month → paid after that<br><br>
+
+                <strong>Value proposition:</strong><br>
+                &nbsp;&nbsp;- One wrong quote costs a moving company $200-500 (wrong truck, overtime crew)<br>
+                &nbsp;&nbsp;- One "couch doesn't fit" incident wastes 30-60 minutes of crew time ($75-150)<br>
+                &nbsp;&nbsp;- Tool pays for itself on the FIRST accurate quote<br><br>
+
+                <strong>Market:</strong><br>
+                &nbsp;&nbsp;- ~7,000 moving companies in the US<br>
+                &nbsp;&nbsp;- None of them have this. They all use pen-and-paper estimates or phone calls.<br>
+                &nbsp;&nbsp;- The "virtual estimate" tools that exist are just video calls — a human eyeballs it.<br>
+                &nbsp;&nbsp;- This is the first one with actual 3D measurements + AI inventory.
+            </div>
+
+            <h3 style="color:#fff; margin: 16px 0 8px; font-size: 1rem;">Tech Stack</h3>
+            <div class="info-box">
+                <strong>Customer-facing (phone app):</strong><br>
+                &nbsp;&nbsp;- Phone camera (no special hardware needed for customer)<br>
+                &nbsp;&nbsp;- Video uploaded to your Jetson server or a cloud GPU<br>
+                &nbsp;&nbsp;- Web app works too — no app store needed, just send them a link<br><br>
+
+                <strong>Crew-facing (building scan):</strong><br>
+                &nbsp;&nbsp;- Xbox Kinect or phone with LiDAR (iPhone 12+)<br>
+                &nbsp;&nbsp;- Laptop for scanning, Jetson for processing<br>
+                &nbsp;&nbsp;- Building database saved locally + synced<br><br>
+
+                <strong>Backend (Jetson):</strong><br>
+                &nbsp;&nbsp;- <strong>YOLOv8</strong> — furniture detection + classification<br>
+                &nbsp;&nbsp;- <strong>Segment Anything (SAM)</strong> — isolate each object precisely<br>
+                &nbsp;&nbsp;- <strong>Open3D / COLMAP</strong> — 3D reconstruction + measurements<br>
+                &nbsp;&nbsp;- <strong>gemma3:4b</strong> — generate reports, answer questions ("will the couch fit?")<br>
+                &nbsp;&nbsp;- <strong>RTAB-Map</strong> — real-time SLAM for Kinect route scanning<br>
+                &nbsp;&nbsp;- <strong>SQLite / PostgreSQL</strong> — building database, customer records<br>
+                &nbsp;&nbsp;- <strong>Flask / FastAPI</strong> — API for phone app to upload videos + get results
+            </div>
+
+            <h3 style="color:#fff; margin: 16px 0 8px; font-size: 1rem;">Build Order</h3>
+            <div class="info-box">
+                <strong>Phase 1 — Proof of concept (you can start now):</strong><br>
+                &nbsp;&nbsp;- Scan your own room with Kinect<br>
+                &nbsp;&nbsp;- Get furniture inventory + dimensions working<br>
+                &nbsp;&nbsp;- Show your buddy: "here's every item in my living room with measurements"<br><br>
+
+                <strong>Phase 2 — Route scanning:</strong><br>
+                &nbsp;&nbsp;- Scan a hallway/stairwell with Kinect<br>
+                &nbsp;&nbsp;- Extract doorway widths, hallway clearance<br>
+                &nbsp;&nbsp;- Cross-reference: item dimensions vs route clearance → generate warnings<br><br>
+
+                <strong>Phase 3 — Phone upload:</strong><br>
+                &nbsp;&nbsp;- Build web app where customer uploads a video<br>
+                &nbsp;&nbsp;- Jetson processes it, returns inventory report<br>
+                &nbsp;&nbsp;- Your buddy sends the link to customers before the move<br><br>
+
+                <strong>Phase 4 — Building database:</strong><br>
+                &nbsp;&nbsp;- Save route scans per address<br>
+                &nbsp;&nbsp;- Every time crew goes to a building, scan is saved<br>
+                &nbsp;&nbsp;- Next move at same building → route already mapped<br>
+                &nbsp;&nbsp;- After 6 months your buddy has every building in his area mapped<br><br>
+
+                <strong>Phase 5 — Scale:</strong><br>
+                &nbsp;&nbsp;- Offer to other moving companies as a subscription service<br>
+                &nbsp;&nbsp;- Shared building database (anonymized) — one company scans a building, all companies benefit<br>
+                &nbsp;&nbsp;- Mobile app on app stores
+            </div>
+
+            <div class="parts-table" style="margin-top: 16px;">
+                <table class="parts-table">
+                    <tr><th>What You Need</th><th>Status</th><th>Cost</th></tr>
+                    <tr><td>Jetson Orin Nano Super</td><td style="color:#ffcc00;">Ordered</td><td>$249</td></tr>
+                    <tr><td>128GB microSD</td><td style="color:#ffcc00;">Ordered</td><td>$12</td></tr>
+                    <tr><td>Xbox 360 Kinect</td><td style="color:#ffcc00;">Ordered</td><td>$10-15</td></tr>
+                    <tr><td>Kinect USB adapter</td><td style="color:#ffcc00;">Ordered</td><td>$5-10</td></tr>
+                    <tr><td>Ethernet cable</td><td style="color:#ffcc00;">Ordered</td><td>$5</td></tr>
+                    <tr><td>Software (all open source)</td><td style="color:#00ff88;">Free</td><td>$0</td></tr>
+                    <tr class="total"><td colspan="2">Total</td><td>~$280-290</td></tr>
+                </table>
+            </div>
+
+            <p style="margin-top: 16px; color: #00ff88; font-weight: 600; font-size: 0.95rem;">
+                You already ordered everything you need. This is buildable the day your hardware arrives.
+            </p>
+
+            <div class="stack">
+                <span class="stack-item">Xbox Kinect (route scanning)</span>
+                <span class="stack-item">Phone camera (customer inventory)</span>
+                <span class="stack-item">YOLOv8 + SAM</span>
+                <span class="stack-item">Open3D / RTAB-Map</span>
+                <span class="stack-item">gemma3:4b (reports)</span>
+                <span class="stack-item">FastAPI (web backend)</span>
+                <span class="stack-item">SQLite (building DB)</span>
+            </div>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- DRONE -->
+        <!-- ============================================ -->
+        <div class="section-divider">Autonomous Drone</div>
+
+        <div class="project">
+            <div class="project-head">
+                <div class="project-icon">🚁</div>
+                <div class="project-title">
+                    <h2>AI Drone — Jetson as Ground Station</h2>
+                    <div class="tags">
+                        <span class="tag hardware">Hardware</span>
+                        <span class="tag vision">Vision</span>
+                        <span class="tag auto">Autonomous</span>
+                    </div>
+                </div>
+                <span class="difficulty advanced">Advanced</span>
+            </div>
+            <p>Lightweight 3-4" FPV drone streams video to the Jetson on the ground.
+               Jetson runs AI (object detection, path planning, tracking) and sends commands back.
+               Drone stays cheap and light. Brain stays safe on your desk.</p>
+
+            <div class="info-box">
+                <strong>Architecture:</strong><br>
+                &nbsp;&nbsp;Drone (camera + VTX) → Video receiver on ground → Jetson (AI brain) → Radio TX → Drone (flight commands)<br><br>
+                <strong>What the Jetson does on the ground:</strong><br>
+                &nbsp;&nbsp;- Receives live video feed from drone<br>
+                &nbsp;&nbsp;- Runs YOLOv8 object detection at 30fps<br>
+                &nbsp;&nbsp;- Plans autonomous flight paths<br>
+                &nbsp;&nbsp;- Sends MAVLink commands back to drone's flight controller<br>
+                &nbsp;&nbsp;- Records + processes footage in real-time<br>
+                &nbsp;&nbsp;- If drone crashes = $50 loss, not $300
+            </div>
+
+            <h3 style="color:#fff; margin: 16px 0 8px; font-size: 1rem;">Parts List — 3" Drone Build (US Sellers Only)</h3>
+            <table class="parts-table">
+                <tr><th>Part</th><th>Source</th><th>Price</th></tr>
+                <tr>
+                    <td>SpeedyBee F405 AIO 25x25<br><span class="note">Flight controller + 4-in-1 ESC + OSD all in one board</span></td>
+                    <td><a href="https://www.getfpv.com/speedybee-aio-f4-fc-40a-3-6s-4-in-1-bluejay-esc-25x25.html" target="_blank">GetFPV</a></td>
+                    <td>$40-50</td>
+                </tr>
+                <tr>
+                    <td>3" Carbon Frame<br><span class="note">Any lightweight 3" frame, 25x25mm FC mounting</span></td>
+                    <td><a href="https://pyrodrone.com/collections/3-inch-frames" target="_blank">Pyrodrone</a> / <a href="https://www.getfpv.com/multi-rotor-frames/3-quad-frames.html" target="_blank">GetFPV</a></td>
+                    <td>$20-35</td>
+                </tr>
+                <tr>
+                    <td>4x Motors (1404 3800KV)<br><span class="note">BetaFPV 1404 or iFlight XING 1404 — sized for 3"</span></td>
+                    <td><a href="https://www.getfpv.com" target="_blank">GetFPV</a> / <a href="https://betafpv.com" target="_blank">BetaFPV</a></td>
+                    <td>$30-40</td>
+                </tr>
+                <tr>
+                    <td>3" Propellers (pack of 8+)<br><span class="note">Gemfan 3018 or HQ Prop 3x1.8 — buy extras, you'll break them</span></td>
+                    <td><a href="https://www.racedayquads.com" target="_blank">RaceDayQuads</a></td>
+                    <td>$5-8</td>
+                </tr>
+                <tr>
+                    <td>4S 450-650mAh LiPo Battery<br><span class="note">GNB or Tattu — small and light for 3"</span></td>
+                    <td><a href="https://pyrodrone.com" target="_blank">Pyrodrone</a> / Amazon</td>
+                    <td>$15-20</td>
+                </tr>
+                <tr>
+                    <td>FPV Camera<br><span class="note">Caddx Ratel 2 or RunCam Phoenix 2 Nano — tiny, good quality</span></td>
+                    <td><a href="https://www.getfpv.com" target="_blank">GetFPV</a></td>
+                    <td>$20-30</td>
+                </tr>
+                <tr>
+                    <td>Video Transmitter (VTX)<br><span class="note">Rush Tiny Tank or AKK FX2 — analog, cheap, gets the job done</span></td>
+                    <td><a href="https://www.racedayquads.com" target="_blank">RaceDayQuads</a></td>
+                    <td>$15-25</td>
+                </tr>
+                <tr>
+                    <td>VTX Antenna<br><span class="note">Small whip or pagoda antenna</span></td>
+                    <td><a href="https://www.getfpv.com" target="_blank">GetFPV</a></td>
+                    <td>$5-10</td>
+                </tr>
+                <tr>
+                    <td>ExpressLRS Receiver<br><span class="note">BetaFPV ELRS Lite or HappyModel EP1 — tiny, long range</span></td>
+                    <td><a href="https://betafpv.com" target="_blank">BetaFPV</a> / <a href="https://www.getfpv.com" target="_blank">GetFPV</a></td>
+                    <td>$15-20</td>
+                </tr>
+                <tr style="border-top: 1px solid rgba(255,255,255,0.1);">
+                    <td colspan="2" style="color:#999;">Drone subtotal</td>
+                    <td style="color:#ffcc00;">$165-240</td>
+                </tr>
+            </table>
+
+            <h4 style="color:#ff8844; margin: 16px 0 6px; font-size: 0.85rem;">Ground Station (stuff you need to fly)</h4>
+            <table class="parts-table">
+                <tr><th>Part</th><th>Source</th><th>Price</th></tr>
+                <tr>
+                    <td>Radio Controller<br><span class="note">RadioMaster Pocket ELRS — cheapest good radio, ExpressLRS built in</span></td>
+                    <td><a href="https://www.getfpv.com" target="_blank">GetFPV</a> / <a href="https://www.racedayquads.com" target="_blank">RDQ</a></td>
+                    <td>$55-65</td>
+                </tr>
+                <tr>
+                    <td>FPV Goggles<br><span class="note">Eachine EV800D — cheapest usable goggles with built-in receiver + DVR</span></td>
+                    <td>Amazon / <a href="https://www.getfpv.com" target="_blank">GetFPV</a></td>
+                    <td>$60-80</td>
+                </tr>
+                <tr>
+                    <td>LiPo Charger<br><span class="note">ToolkitRC M4AC or ISDT Q6 Nano — charges 1-4S packs</span></td>
+                    <td><a href="https://pyrodrone.com" target="_blank">Pyrodrone</a> / Amazon</td>
+                    <td>$20-30</td>
+                </tr>
+                <tr>
+                    <td>Analog Video Capture (for Jetson)<br><span class="note">USB video capture dongle — lets Jetson receive analog FPV feed</span></td>
+                    <td>Amazon</td>
+                    <td>$10-15</td>
+                </tr>
+                <tr style="border-top: 1px solid rgba(255,255,255,0.1);">
+                    <td colspan="2" style="color:#999;">Ground station subtotal</td>
+                    <td style="color:#ffcc00;">$145-190</td>
+                </tr>
+            </table>
+
+            <table class="parts-table">
+                <tr class="total"><td colspan="2">Total (drone + ground station)</td><td>$310-430</td></tr>
+                <tr><td colspan="2" style="color:#888; font-size: 0.8rem;">+ Jetson Orin Nano (already ordered)</td><td style="color:#888;">$249</td></tr>
+            </table>
+
+            <div class="stack">
+                <span class="stack-item">Betaflight (flight controller)</span>
+                <span class="stack-item">YOLOv8 + TensorRT (Jetson)</span>
+                <span class="stack-item">MAVSDK Python</span>
+                <span class="stack-item">ExpressLRS</span>
+            </div>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- OTHER ROBOT PROJECTS -->
+        <!-- ============================================ -->
+        <div class="section-divider">More Robot / Autonomy Projects</div>
+
+        <!-- SMART SECURITY CAMERA -->
+        <div class="project">
+            <div class="project-head">
+                <div class="project-icon">📸</div>
+                <div class="project-title">
+                    <h2>AI Security Camera System</h2>
+                    <div class="tags">
+                        <span class="tag vision">Vision</span>
+                        <span class="tag auto">24/7</span>
+                        <span class="tag easy">Easy Start</span>
+                    </div>
+                </div>
+                <span class="difficulty beginner">Beginner</span>
+            </div>
+            <p>Plug a USB camera or RTSP IP camera into the Jetson. It watches 24/7 with real AI — not just motion detection.
+               Knows the difference between a person, a car, a cat, a delivery truck. Sends you smart alerts
+               with context: "Person at front door" vs "Cat walked by" instead of 50 false alarms a day.</p>
+            <div class="info-box">
+                <strong>What it does that Ring/Nest can't:</strong><br>
+                &nbsp;&nbsp;- Recognizes specific people (knows it's you vs a stranger) — <strong>no subscription fee</strong><br>
+                &nbsp;&nbsp;- Tracks objects across frames (follows a person walking through the yard)<br>
+                &nbsp;&nbsp;- Custom alerts: "Alert me for people but not animals after 10pm"<br>
+                &nbsp;&nbsp;- LLM describes what's happening: "Delivery driver placed package at door and left"<br>
+                &nbsp;&nbsp;- All local — no video going to Amazon/Google servers<br>
+                &nbsp;&nbsp;- Multiple cameras — Jetson can handle 4+ camera streams simultaneously
+            </div>
+            <table class="parts-table">
+                <tr><th>Part</th><th>Price</th></tr>
+                <tr><td>USB webcam (1080p) or IP camera</td><td>$20-50</td></tr>
+                <tr><td>Jetson (already have)</td><td>$0</td></tr>
+                <tr class="total"><td>Total</td><td>$20-50</td></tr>
+            </table>
+            <div class="stack">
+                <span class="stack-item">YOLOv8</span>
+                <span class="stack-item">DeepSORT (tracking)</span>
+                <span class="stack-item">InsightFace (recognition)</span>
+                <span class="stack-item">Telegram/Discord alerts</span>
+            </div>
+        </div>
+
+        <!-- ROBOT CAR -->
+        <div class="project">
+            <div class="project-head">
+                <div class="project-icon">🏎️</div>
+                <div class="project-title">
+                    <h2>Autonomous Robot Car (JetBot)</h2>
+                    <div class="tags">
+                        <span class="tag hardware">Hardware</span>
+                        <span class="tag ai">AI</span>
+                        <span class="tag auto">Autonomous</span>
+                    </div>
+                </div>
+                <span class="difficulty beginner">Beginner</span>
+            </div>
+            <p>NVIDIA's official starter project. A small wheeled robot that drives itself.
+               Follows lanes, avoids obstacles, follows people — all using the Jetson's GPU for real-time vision.
+               Great first robotics project, tons of tutorials.</p>
+            <div class="info-box">
+                <strong>Capabilities:</strong><br>
+                &nbsp;&nbsp;- <strong>Collision avoidance</strong> — learns to steer away from obstacles<br>
+                &nbsp;&nbsp;- <strong>Road following</strong> — trained to stay on a path/line<br>
+                &nbsp;&nbsp;- <strong>Object following</strong> — locks onto a person or object and follows<br>
+                &nbsp;&nbsp;- <strong>Teleoperation</strong> — control from your phone/laptop via web interface<br>
+                &nbsp;&nbsp;- <strong>Train your own behaviors</strong> — collect data, train a model, deploy to the robot
+            </div>
+            <table class="parts-table">
+                <tr><th>Part</th><th>Price</th></tr>
+                <tr><td>JetBot chassis kit (motors, wheels, frame, battery holder)</td><td>$50-80</td></tr>
+                <tr><td>IMX219 CSI camera</td><td>$15</td></tr>
+                <tr><td>Motor driver board (PCA9685 or similar)</td><td>$10-15</td></tr>
+                <tr><td>Battery pack (USB power bank or LiPo)</td><td>$15-25</td></tr>
+                <tr class="total"><td>Total (+ Jetson)</td><td>$90-135</td></tr>
+            </table>
+            <div class="stack">
+                <span class="stack-item">NVIDIA JetBot repo</span>
+                <span class="stack-item">PyTorch</span>
+                <span class="stack-item">Jupyter Notebooks</span>
+                <span class="stack-item">CSI Camera</span>
+            </div>
+        </div>
+
+        <!-- ROBOT ARM -->
+        <div class="project">
+            <div class="project-head">
+                <div class="project-icon">🦾</div>
+                <div class="project-title">
+                    <h2>AI Robot Arm — Pick & Place</h2>
+                    <div class="tags">
+                        <span class="tag hardware">Hardware</span>
+                        <span class="tag vision">Vision</span>
+                        <span class="tag ai">AI</span>
+                    </div>
+                </div>
+                <span class="difficulty intermediate">Intermediate</span>
+            </div>
+            <p>A robotic arm with a camera that sees objects, identifies them, and picks them up.
+               "Pick up the red block" — the Jetson finds the red block in the camera feed, calculates
+               the coordinates, and commands the arm to grab it. Teach it new objects by showing them to the camera.</p>
+            <div class="info-box">
+                <strong>What you can build:</strong><br>
+                &nbsp;&nbsp;- <strong>Sorting system:</strong> camera sees objects on a conveyor/table, arm sorts by type/color<br>
+                &nbsp;&nbsp;- <strong>Voice-controlled:</strong> "Pick up the screwdriver" → Whisper STT + YOLOv8 + arm<br>
+                &nbsp;&nbsp;- <strong>Stacking/assembly:</strong> picks up blocks/parts and assembles in order<br>
+                &nbsp;&nbsp;- <strong>Handwriting:</strong> holds a pen, draws/writes using coordinates from the LLM
+            </div>
+            <table class="parts-table">
+                <tr><th>Part</th><th>Price</th></tr>
+                <tr><td>Robot arm kit (LeArm / xArm / Hiwonder 6DOF)</td><td>$50-120</td></tr>
+                <tr><td>Servo driver board (PCA9685)</td><td>$8</td></tr>
+                <tr><td>USB camera or IMX219</td><td>$15-25</td></tr>
+                <tr class="total"><td>Total (+ Jetson)</td><td>$75-155</td></tr>
+            </table>
+            <div class="stack">
+                <span class="stack-item">YOLOv8 (detection)</span>
+                <span class="stack-item">OpenCV (coordinates)</span>
+                <span class="stack-item">Servo control via I2C</span>
+                <span class="stack-item">Whisper (voice commands)</span>
+            </div>
+        </div>
+
+        <!-- VOICE ASSISTANT -->
+        <div class="project">
+            <div class="project-head">
+                <div class="project-icon">🎙️</div>
+                <div class="project-title">
+                    <h2>Private Voice Assistant (Local Alexa)</h2>
+                    <div class="tags">
+                        <span class="tag ai">AI</span>
+                        <span class="tag auto">24/7</span>
+                        <span class="tag easy">No Cloud</span>
+                    </div>
+                </div>
+                <span class="difficulty beginner">Beginner</span>
+            </div>
+            <p>Like Alexa/Siri but fully private — runs entirely on the Jetson. Speech to text (Whisper) +
+               LLM (gemma3) + text to speech (Piper). No recordings sent to Amazon. No subscription.
+               Ask it questions, control smart home devices, set timers, play music — all local.</p>
+            <div class="info-box">
+                <strong>Pipeline:</strong><br>
+                &nbsp;&nbsp;1. Microphone picks up "Hey Jetson" (wake word detection)<br>
+                &nbsp;&nbsp;2. Whisper converts speech to text locally (~0.5s)<br>
+                &nbsp;&nbsp;3. gemma3:4b processes the query<br>
+                &nbsp;&nbsp;4. Piper TTS converts response to speech (~0.3s)<br>
+                &nbsp;&nbsp;5. Plays through speaker<br>
+                &nbsp;&nbsp;Total latency: ~2-3 seconds (comparable to Alexa)
+            </div>
+            <table class="parts-table">
+                <tr><th>Part</th><th>Price</th></tr>
+                <tr><td>USB microphone (ReSpeaker or any USB mic)</td><td>$10-30</td></tr>
+                <tr><td>Speaker (3.5mm or USB)</td><td>$10-20</td></tr>
+                <tr class="total"><td>Total (+ Jetson)</td><td>$20-50</td></tr>
+            </table>
+            <div class="stack">
+                <span class="stack-item">Whisper (STT)</span>
+                <span class="stack-item">gemma3:4b (LLM)</span>
+                <span class="stack-item">Piper (TTS)</span>
+                <span class="stack-item">Home Assistant (smart home)</span>
+            </div>
+        </div>
+
+        <!-- SMART PET FEEDER -->
+        <div class="project">
+            <div class="project-head">
+                <div class="project-icon">🐕</div>
+                <div class="project-title">
+                    <h2>AI Pet Monitor & Auto Feeder</h2>
+                    <div class="tags">
+                        <span class="tag vision">Vision</span>
+                        <span class="tag auto">Automated</span>
+                    </div>
+                </div>
+                <span class="difficulty beginner">Beginner</span>
+            </div>
+            <p>Camera watches your pet. AI recognizes specific animals (your dog vs the neighbor's cat),
+               tracks their activity, detects if they're eating/sleeping/playing. Auto-dispenses food on schedule
+               or when the pet sits at the bowl. Sends you clips of funny moments.</p>
+            <table class="parts-table">
+                <tr><th>Part</th><th>Price</th></tr>
+                <tr><td>USB camera</td><td>$20</td></tr>
+                <tr><td>Servo motor + food dispenser mechanism</td><td>$15-30</td></tr>
+                <tr class="total"><td>Total (+ Jetson)</td><td>$35-50</td></tr>
+            </table>
+        </div>
+
+        <!-- GARDEN BOT -->
+        <div class="project">
+            <div class="project-head">
+                <div class="project-icon">🌱</div>
+                <div class="project-title">
+                    <h2>Smart Garden / Plant Monitor</h2>
+                    <div class="tags">
+                        <span class="tag vision">Vision</span>
+                        <span class="tag ai">AI</span>
+                        <span class="tag auto">Automated</span>
+                    </div>
+                </div>
+                <span class="difficulty beginner">Beginner</span>
+            </div>
+            <p>Camera monitors your plants. AI detects plant health (yellowing leaves, pests, wilting),
+               identifies species, tracks growth over time. Combined with soil moisture sensors,
+               auto-waters when needed. Daily report: "Tomato plant grew 2cm, basil needs water, detected aphids on rosemary."</p>
+            <table class="parts-table">
+                <tr><th>Part</th><th>Price</th></tr>
+                <tr><td>USB camera</td><td>$20</td></tr>
+                <tr><td>Soil moisture sensors (ESP32 based)</td><td>$10-15</td></tr>
+                <tr><td>Relay module + solenoid valve (auto-watering)</td><td>$10-15</td></tr>
+                <tr class="total"><td>Total (+ Jetson)</td><td>$40-50</td></tr>
+            </table>
+        </div>
+
+        <p class="footer">Jetson Orin Nano Robotics Projects — February 2026</p>
+    </div>
+</body>
+</html>
