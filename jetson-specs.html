@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jetson Orin Nano — What It Can Do</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            color: #e0e0e0;
+            padding: 40px 20px;
+        }
+        .container { max-width: 940px; margin: 0 auto; }
+        h1 {
+            text-align: center;
+            font-size: 2.2rem;
+            margin-bottom: 8px;
+            background: linear-gradient(90deg, #00d4ff, #00ff88, #ffcc00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .subtitle { text-align: center; color: #888; margin-bottom: 12px; font-size: 0.95rem; }
+        .nav-tabs {
+            display: flex;
+            gap: 4px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 32px;
+            padding: 6px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 14px;
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+        .nav-tabs a {
+            padding: 8px 18px;
+            border-radius: 10px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            text-decoration: none;
+            color: #888;
+            transition: all 0.2s;
+        }
+        .nav-tabs a:hover { color: #fff; background: rgba(255,255,255,0.08); }
+        .nav-tabs a.active { color: #00d4ff; background: rgba(0,212,255,0.12); }
+
+        .hero-box {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 24px;
+            border: 1px solid rgba(0,212,255,0.2);
+            text-align: center;
+        }
+        .hero-box .price {
+            font-size: 3rem;
+            font-weight: 800;
+            color: #00ff88;
+            margin-bottom: 4px;
+        }
+        .hero-box .price-note { color: #888; font-size: 0.85rem; margin-bottom: 20px; }
+        .spec-row {
+            display: flex;
+            justify-content: center;
+            gap: 32px;
+            flex-wrap: wrap;
+            margin-top: 16px;
+        }
+        .spec-item { text-align: center; }
+        .spec-val { font-size: 1.8rem; font-weight: 700; color: #00d4ff; }
+        .spec-label { font-size: 0.75rem; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-top: 2px; }
+
+        .section {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 28px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .section h2 { color: #fff; font-size: 1.15rem; margin-bottom: 14px; }
+        .section p { color: #bbb; line-height: 1.7; font-size: 0.9rem; margin-bottom: 12px; }
+        .section p strong { color: #fff; }
+
+        .comparison {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 14px 0;
+            font-size: 0.85rem;
+        }
+        .comparison th {
+            text-align: left;
+            padding: 10px 14px;
+            color: #00d4ff;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .comparison td {
+            padding: 10px 14px;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+            color: #ccc;
+        }
+        .comparison tr.highlight td { color: #00ff88; font-weight: 600; }
+        .comparison .dim { color: #666; }
+
+        .can-do {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin: 14px 0;
+        }
+        @media (max-width: 600px) { .can-do { grid-template-columns: 1fr; } }
+        .can-item {
+            background: rgba(0,0,0,0.25);
+            border-radius: 10px;
+            padding: 14px 16px;
+        }
+        .can-item h3 {
+            color: #fff;
+            font-size: 0.9rem;
+            margin-bottom: 4px;
+        }
+        .can-item p { color: #999; font-size: 0.8rem; line-height: 1.5; margin: 0; }
+        .can-item .perf { color: #00ff88; font-size: 0.75rem; font-weight: 600; margin-top: 6px; }
+
+        .model-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 14px 0;
+            font-size: 0.83rem;
+        }
+        .model-table th {
+            text-align: left;
+            padding: 8px 12px;
+            color: #00d4ff;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .model-table td {
+            padding: 8px 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+            color: #ccc;
+        }
+        .model-table .fits { color: #00ff88; font-weight: 600; }
+        .model-table .tight { color: #ffcc00; font-weight: 600; }
+        .model-table .no { color: #ff6666; }
+        .model-table .note { font-size: 0.72rem; color: #888; }
+
+        .info-box {
+            background: rgba(0,0,0,0.3);
+            border-radius: 10px;
+            padding: 16px;
+            margin: 14px 0;
+            font-size: 0.85rem;
+            line-height: 1.7;
+            color: #aaa;
+        }
+        .info-box strong { color: #00d4ff; }
+
+        .vs-cloud {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin: 14px 0;
+        }
+        @media (max-width: 600px) { .vs-cloud { grid-template-columns: 1fr; } }
+        .vs-box {
+            background: rgba(0,0,0,0.25);
+            border-radius: 12px;
+            padding: 18px;
+        }
+        .vs-box h3 { font-size: 0.9rem; margin-bottom: 10px; }
+        .vs-box.cloud h3 { color: #ff6666; }
+        .vs-box.local h3 { color: #00ff88; }
+        .vs-box ul { list-style: none; padding: 0; }
+        .vs-box li {
+            font-size: 0.82rem;
+            color: #bbb;
+            padding: 3px 0;
+            line-height: 1.5;
+        }
+
+        .footer {
+            text-align: center; color: #444; font-size: 0.8rem;
+            margin-top: 50px; padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.06);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Jetson Orin Nano Super</h1>
+        <nav class="nav-tabs">
+            <a href="index.html">Home</a>
+            <a href="jetson-specs.html" class="active">The Jetson</a>
+            <a href="jetson-ideas.html">Software & AI</a>
+            <a href="jetson-robotics.html">Robotics</a>
+            <a href="roadmap.html">Agent Roadmap</a>
+            <a href="dashboard.html">Dashboard</a>
+        </nav>
+        <p class="subtitle">A full AI computer the size of a credit card</p>
+
+        <!-- HERO SPECS -->
+        <div class="hero-box">
+            <div class="price">$249</div>
+            <div class="price-note">One-time cost. No subscriptions. No API fees. Runs 24/7 for ~$2/month in electricity.</div>
+            <div class="spec-row">
+                <div class="spec-item">
+                    <div class="spec-val">67</div>
+                    <div class="spec-label">TOPS (AI Performance)</div>
+                </div>
+                <div class="spec-item">
+                    <div class="spec-val">8GB</div>
+                    <div class="spec-label">Unified Memory</div>
+                </div>
+                <div class="spec-item">
+                    <div class="spec-val">1024</div>
+                    <div class="spec-label">CUDA Cores</div>
+                </div>
+                <div class="spec-item">
+                    <div class="spec-val">25W</div>
+                    <div class="spec-label">Max Power Draw</div>
+                </div>
+                <div class="spec-item">
+                    <div class="spec-val">6</div>
+                    <div class="spec-label">ARM Cortex-A78AE Cores</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- WHAT CAN IT ACTUALLY DO -->
+        <div class="section">
+            <h2>What Can It Actually Do?</h2>
+            <p>The Jetson is a <strong>GPU-accelerated Linux computer</strong>. It runs Ubuntu, has USB ports, Ethernet,
+               WiFi, and a full desktop. But the real point is the <strong>NVIDIA Ampere GPU</strong> — the same architecture
+               as data center GPUs, just smaller. It runs AI models locally that would normally cost you API credits.</p>
+
+            <div class="can-do">
+                <div class="can-item">
+                    <h3>Run LLMs Locally</h3>
+                    <p>Chat with AI models like gemma3, Llama 3.2, Qwen3, Phi-4 — no internet needed, no API costs, completely private.</p>
+                    <div class="perf">gemma3:4b — ~15-25 tokens/sec on Jetson GPU</div>
+                </div>
+                <div class="can-item">
+                    <h3>Vision AI / Image Understanding</h3>
+                    <p>Feed it images or video frames, it tells you what it sees. Describe scenes, read text, identify objects, answer questions about photos.</p>
+                    <div class="perf">gemma3:4b vision — ~2-4 sec per image analysis</div>
+                </div>
+                <div class="can-item">
+                    <h3>Object Detection (Real-Time)</h3>
+                    <p>YOLOv8 identifies and tracks objects in live video — people, cars, animals, furniture, packages. Draws bounding boxes at 30+ FPS.</p>
+                    <div class="perf">YOLOv8n + TensorRT — 30-60 FPS on live video</div>
+                </div>
+                <div class="can-item">
+                    <h3>Speech to Text</h3>
+                    <p>Whisper runs locally — transcribe audio, voice commands, meeting recordings. No audio sent to any cloud service.</p>
+                    <div class="perf">Whisper small — real-time transcription</div>
+                </div>
+                <div class="can-item">
+                    <h3>Text to Speech</h3>
+                    <p>Piper TTS generates natural-sounding speech locally. Build a voice assistant that talks back without any cloud dependency.</p>
+                    <div class="perf">Piper — near-instant, runs on CPU alone</div>
+                </div>
+                <div class="can-item">
+                    <h3>3D Scanning & SLAM</h3>
+                    <p>Process depth camera data into 3D models. Build room maps, detect objects in 3D space, generate floor plans.</p>
+                    <div class="perf">RTAB-Map — real-time with depth camera</div>
+                </div>
+                <div class="can-item">
+                    <h3>Image Generation</h3>
+                    <p>Stable Diffusion runs on Jetson. Generate images from text prompts locally. Slow but functional — good for batch generation overnight.</p>
+                    <div class="perf">SD 1.5 — ~30-60 sec per image (512x512)</div>
+                </div>
+                <div class="can-item">
+                    <h3>Web Scraping & Automation</h3>
+                    <p>Run bots 24/7 — monitor prices, scrape data, automate browser tasks, post to social media, watch prediction markets.</p>
+                    <div class="perf">Always-on — $2/month electricity vs $50+/month cloud</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- WHAT MODELS FIT -->
+        <div class="section">
+            <h2>What AI Models Fit in 8GB?</h2>
+            <p>The Jetson has <strong>8GB unified memory</strong> shared between CPU and GPU. The OS uses ~1-1.5GB,
+               leaving <strong>~6.5GB for models</strong>. Here's what fits:</p>
+
+            <table class="model-table">
+                <tr><th>Model</th><th>Size</th><th>VRAM</th><th>Fits?</th><th>Speed</th></tr>
+                <tr>
+                    <td>gemma3:1b</td>
+                    <td>1B params</td>
+                    <td>~1.2GB</td>
+                    <td class="fits">Easy</td>
+                    <td>~40-60 tok/s</td>
+                </tr>
+                <tr>
+                    <td>Phi-4 Mini (Q4)</td>
+                    <td>3.8B params</td>
+                    <td>~2.5GB</td>
+                    <td class="fits">Easy</td>
+                    <td>~25-35 tok/s</td>
+                </tr>
+                <tr>
+                    <td>gemma3:4b<br><span class="note">Vision capable</span></td>
+                    <td>4B params</td>
+                    <td>~3GB</td>
+                    <td class="fits">Easy</td>
+                    <td>~15-25 tok/s</td>
+                </tr>
+                <tr>
+                    <td>Llama 3.2:3b</td>
+                    <td>3B params</td>
+                    <td>~2.2GB</td>
+                    <td class="fits">Easy</td>
+                    <td>~25-35 tok/s</td>
+                </tr>
+                <tr>
+                    <td>Qwen2.5-VL:3B<br><span class="note">Vision capable</span></td>
+                    <td>3B params</td>
+                    <td>~2.5GB</td>
+                    <td class="fits">Easy</td>
+                    <td>~20-30 tok/s</td>
+                </tr>
+                <tr>
+                    <td>Mistral 7B (Q4)</td>
+                    <td>7B params</td>
+                    <td>~4.5GB</td>
+                    <td class="tight">Tight</td>
+                    <td>~8-12 tok/s</td>
+                </tr>
+                <tr>
+                    <td>Llama 3.1:8b (Q4)</td>
+                    <td>8B params</td>
+                    <td>~5.5GB</td>
+                    <td class="tight">Tight</td>
+                    <td>~5-8 tok/s</td>
+                </tr>
+                <tr>
+                    <td>gemma3:12b (Q4)</td>
+                    <td>12B params</td>
+                    <td>~7.5GB</td>
+                    <td class="tight">Barely</td>
+                    <td>~3-5 tok/s</td>
+                </tr>
+                <tr>
+                    <td>Llama 3.1:70b</td>
+                    <td>70B params</td>
+                    <td>~40GB</td>
+                    <td class="no">No</td>
+                    <td>Needs 48GB+ GPU</td>
+                </tr>
+                <tr>
+                    <td>Claude / GPT-4</td>
+                    <td>???</td>
+                    <td>???</td>
+                    <td class="no">Cloud only</td>
+                    <td>API only</td>
+                </tr>
+            </table>
+
+            <div class="info-box">
+                <strong>Sweet spot:</strong> 1B-4B parameter models run fast and fit easily.
+                7B-8B models fit but are slower. 12B is the absolute ceiling — it'll work but you're maxing out memory.
+                Anything above 12B needs a bigger GPU.<br><br>
+                <strong>Q4 quantization:</strong> Models marked Q4 are compressed to 4-bit precision.
+                This cuts memory usage in half with minimal quality loss. Ollama does this automatically.
+            </div>
+        </div>
+
+        <!-- VS CLOUD APIS -->
+        <div class="section">
+            <h2>Local Jetson vs Cloud APIs</h2>
+            <div class="vs-cloud">
+                <div class="vs-box cloud">
+                    <h3>Cloud APIs (Claude, GPT-4, etc.)</h3>
+                    <ul>
+                        <li>$0.003 - $0.075 per 1K tokens</li>
+                        <li>$5-15/day for heavy use (vision agent, bots)</li>
+                        <li>$150-450/month for 24/7 automation</li>
+                        <li>Internet required for every call</li>
+                        <li>Rate limits, outages, API changes</li>
+                        <li>Your data goes to their servers</li>
+                        <li>Way smarter (for now)</li>
+                    </ul>
+                </div>
+                <div class="vs-box local">
+                    <h3>Jetson Local (Ollama)</h3>
+                    <ul>
+                        <li>$0.00 per token — unlimited</li>
+                        <li>~$0.07/day in electricity (25W)</li>
+                        <li>~$2/month for 24/7 operation</li>
+                        <li>No internet needed</li>
+                        <li>No rate limits, no outages, you own it</li>
+                        <li>Everything stays on your device</li>
+                        <li>Smaller models (but fine-tunable)</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="info-box">
+                <strong>When to use local:</strong> 24/7 monitoring, automation bots, scraping, privacy-sensitive tasks,
+                high-volume tasks where API costs add up, robotics/drones (need low latency, no internet).<br><br>
+                <strong>When to use cloud:</strong> Tasks that need frontier intelligence (complex reasoning, long documents,
+                code generation), one-off questions, tasks where quality matters more than cost.
+            </div>
+        </div>
+
+        <!-- VS OTHER HARDWARE -->
+        <div class="section">
+            <h2>How It Compares to Other Hardware</h2>
+            <table class="comparison">
+                <tr>
+                    <th>Device</th>
+                    <th>AI Perf</th>
+                    <th>Memory</th>
+                    <th>Power</th>
+                    <th>Price</th>
+                </tr>
+                <tr>
+                    <td>Raspberry Pi 5</td>
+                    <td class="dim">~2 TOPS (CPU only)</td>
+                    <td>8GB</td>
+                    <td>12W</td>
+                    <td>$80</td>
+                </tr>
+                <tr>
+                    <td>Mac Mini M2</td>
+                    <td>15.8 TOPS</td>
+                    <td>8-24GB</td>
+                    <td>22W</td>
+                    <td>$599</td>
+                </tr>
+                <tr class="highlight">
+                    <td><strong>Jetson Orin Nano Super</strong></td>
+                    <td><strong>67 TOPS</strong></td>
+                    <td>8GB</td>
+                    <td>25W</td>
+                    <td><strong>$249</strong></td>
+                </tr>
+                <tr>
+                    <td>Jetson AGX Orin 64GB</td>
+                    <td>275 TOPS</td>
+                    <td>64GB</td>
+                    <td>60W</td>
+                    <td>$1,999</td>
+                </tr>
+                <tr>
+                    <td>RTX 4060 Desktop</td>
+                    <td>~240 TOPS</td>
+                    <td>8GB VRAM</td>
+                    <td>115W</td>
+                    <td>$800+ (full PC)</td>
+                </tr>
+                <tr>
+                    <td>Cloud GPU (A100)</td>
+                    <td>~312 TOPS</td>
+                    <td>80GB</td>
+                    <td>300W</td>
+                    <td>$2-4/hour rental</td>
+                </tr>
+            </table>
+            <div class="info-box">
+                <strong>The Jetson's niche:</strong> Best price-to-AI-performance ratio for an always-on device.
+                A Raspberry Pi can't run real AI models on its CPU. A Mac Mini costs 2.5x more with less AI horsepower.
+                A desktop GPU is faster but uses 5-10x more power and can't sit quietly on a shelf running 24/7.
+                The Jetson is purpose-built for this exact use case.
+            </div>
+        </div>
+
+        <!-- WHAT'S IN THE BOX -->
+        <div class="section">
+            <h2>What's in the Box / What You Need</h2>
+            <div class="info-box">
+                <strong>Included with the $249 Jetson Orin Nano Super Developer Kit:</strong><br>
+                &nbsp;&nbsp;- Jetson Orin Nano module (the actual computer)<br>
+                &nbsp;&nbsp;- Carrier board (the board it plugs into — has all the ports)<br>
+                &nbsp;&nbsp;- Reference design heatsink + fan<br>
+                &nbsp;&nbsp;- Power supply (19V barrel jack)<br><br>
+
+                <strong>What you need to buy separately:</strong><br>
+                &nbsp;&nbsp;- <strong>microSD card (128GB+)</strong> — this is your "hard drive" — $12<br>
+                &nbsp;&nbsp;- <strong>Ethernet cable</strong> — for initial setup and fastest connection — $5<br>
+                &nbsp;&nbsp;- <strong>Monitor + keyboard + mouse</strong> — just for initial setup, then SSH in headless<br><br>
+
+                <strong>Optional but useful:</strong><br>
+                &nbsp;&nbsp;- NVMe SSD (faster than microSD, more reliable for 24/7 use) — $25-40<br>
+                &nbsp;&nbsp;- USB WiFi adapter (if you want wireless after setup) — $10-15<br>
+                &nbsp;&nbsp;- USB webcam (for vision/security projects) — $20+<br>
+                &nbsp;&nbsp;- Kinect / depth camera (for 3D scanning) — $10-25 used
+            </div>
+        </div>
+
+        <!-- PORTS & CONNECTIVITY -->
+        <div class="section">
+            <h2>Ports & Connectivity</h2>
+            <div class="info-box">
+                &nbsp;&nbsp;<strong>4x USB 3.0</strong> — cameras, Kinect, keyboard, drives<br>
+                &nbsp;&nbsp;<strong>Gigabit Ethernet</strong> — wired network, SSH access<br>
+                &nbsp;&nbsp;<strong>DisplayPort</strong> — connect a monitor (up to 4K)<br>
+                &nbsp;&nbsp;<strong>M.2 NVMe slot</strong> — add a fast SSD<br>
+                &nbsp;&nbsp;<strong>M.2 WiFi/BT slot</strong> — add wireless (Intel AX200/AX210)<br>
+                &nbsp;&nbsp;<strong>microSD slot</strong> — boot drive<br>
+                &nbsp;&nbsp;<strong>2x MIPI CSI</strong> — connect camera modules directly (IMX219, IMX477)<br>
+                &nbsp;&nbsp;<strong>40-pin GPIO header</strong> — connect sensors, servos, LEDs, motors (same as Raspberry Pi)<br>
+                &nbsp;&nbsp;<strong>I2C, SPI, UART</strong> — hardware communication buses for robotics
+            </div>
+        </div>
+
+        <!-- GETTING STARTED -->
+        <div class="section">
+            <h2>Getting Started (Day 1)</h2>
+            <div class="info-box">
+                <strong>Step 1: Flash the SD card</strong><br>
+                &nbsp;&nbsp;Download JetPack 6 SDK from NVIDIA. Flash to microSD with Etcher or dd.<br>
+                &nbsp;&nbsp;JetPack includes: Ubuntu 22.04 + CUDA + cuDNN + TensorRT + OpenCV — all pre-configured.<br><br>
+
+                <strong>Step 2: First boot</strong><br>
+                &nbsp;&nbsp;Insert SD, plug in ethernet + monitor + keyboard + power. Boot takes ~2 min first time.<br>
+                &nbsp;&nbsp;Set up username/password through the setup wizard.<br><br>
+
+                <strong>Step 3: SSH in (go headless)</strong><br>
+                &nbsp;&nbsp;Find the Jetson's IP: <code style="background:rgba(0,212,255,0.1); color:#00d4ff; padding:2px 7px; border-radius:4px;">hostname -I</code><br>
+                &nbsp;&nbsp;From your Mac: <code style="background:rgba(0,212,255,0.1); color:#00d4ff; padding:2px 7px; border-radius:4px;">ssh jetson@192.168.1.XX</code><br>
+                &nbsp;&nbsp;Unplug the monitor. Now it's a headless AI server.<br><br>
+
+                <strong>Step 4: Install Ollama</strong><br>
+                &nbsp;&nbsp;<code style="background:rgba(0,212,255,0.1); color:#00d4ff; padding:2px 7px; border-radius:4px;">curl -fsSL https://ollama.com/install.sh | sh</code><br>
+                &nbsp;&nbsp;<code style="background:rgba(0,212,255,0.1); color:#00d4ff; padding:2px 7px; border-radius:4px;">ollama pull gemma3:4b</code><br>
+                &nbsp;&nbsp;<code style="background:rgba(0,212,255,0.1); color:#00d4ff; padding:2px 7px; border-radius:4px;">ollama run gemma3:4b</code><br>
+                &nbsp;&nbsp;You now have a local AI chatbot with vision running on the GPU.<br><br>
+
+                <strong>Step 5: Push files to it</strong><br>
+                &nbsp;&nbsp;From your Mac: <code style="background:rgba(0,212,255,0.1); color:#00d4ff; padding:2px 7px; border-radius:4px;">scp my_script.py jetson@192.168.1.XX:~/</code><br>
+                &nbsp;&nbsp;Or clone repos directly on the Jetson with git.
+            </div>
+        </div>
+
+        <p class="footer">Jetson Orin Nano Super — $249 AI Computer — February 2026</p>
+    </div>
+</body>
+</html>
