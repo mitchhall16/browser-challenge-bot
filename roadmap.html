@@ -28,6 +28,28 @@
             margin-bottom: 40px;
             font-size: 0.95rem;
         }
+        .nav-tabs {
+            display: flex;
+            gap: 4px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 32px;
+            padding: 6px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 14px;
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+        .nav-tabs a {
+            padding: 8px 18px;
+            border-radius: 10px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            text-decoration: none;
+            color: #888;
+            transition: all 0.2s;
+        }
+        .nav-tabs a:hover { color: #fff; background: rgba(255,255,255,0.08); }
+        .nav-tabs a.active { color: #00d4ff; background: rgba(0,212,255,0.12); }
 
         /* Stats bar */
         .stats-bar {
@@ -189,6 +211,13 @@
 <body>
     <div class="container">
         <h1>Figure Agent Roadmap</h1>
+        <nav class="nav-tabs">
+            <a href="index.html">Home</a>
+            <a href="jetson-ideas.html">Software & AI</a>
+            <a href="jetson-robotics.html">Robotics</a>
+            <a href="roadmap.html" class="active">Agent Roadmap</a>
+            <a href="dashboard.html">Dashboard</a>
+        </nav>
         <p class="subtitle">Cloud agent → Local inference → Fine-tuned vision model</p>
 
         <!-- Training Data Stats -->
