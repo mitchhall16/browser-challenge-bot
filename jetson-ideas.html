@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jetson Orin Nano — Project Ideas</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            color: #e0e0e0;
+            padding: 40px 20px;
+        }
+        .container { max-width: 940px; margin: 0 auto; }
+        h1 {
+            text-align: center;
+            font-size: 2.2rem;
+            margin-bottom: 8px;
+            background: linear-gradient(90deg, #ff8844, #ffcc00, #00ff88);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .subtitle {
+            text-align: center;
+            color: #888;
+            margin-bottom: 12px;
+            font-size: 0.95rem;
+        }
+        .hero-stats {
+            text-align: center;
+            margin-bottom: 40px;
+            color: #666;
+            font-size: 0.85rem;
+        }
+        .hero-stats span { color: #00d4ff; font-weight: 600; }
+
+        /* Project cards */
+        .project {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 28px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255,255,255,0.08);
+            transition: border-color 0.2s;
+        }
+        .project:hover { border-color: rgba(255,255,255,0.2); }
+        .project-head {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            margin-bottom: 14px;
+        }
+        .project-icon {
+            font-size: 1.6rem;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255,255,255,0.07);
+            border-radius: 12px;
+            flex-shrink: 0;
+        }
+        .project-title { flex: 1; }
+        .project-title h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+        .project-title .tags { display: flex; gap: 6px; flex-wrap: wrap; }
+        .tag {
+            padding: 2px 10px;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        .tag.money { background: rgba(0,255,136,0.15); color: #00ff88; }
+        .tag.auto { background: rgba(0,212,255,0.15); color: #00d4ff; }
+        .tag.growth { background: rgba(255,204,0,0.15); color: #ffcc00; }
+        .tag.data { background: rgba(170,100,255,0.15); color: #aa64ff; }
+        .tag.easy { background: rgba(255,136,68,0.15); color: #ff8844; }
+
+        .difficulty {
+            padding: 2px 10px;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            white-space: nowrap;
+            height: fit-content;
+        }
+        .difficulty.beginner { background: rgba(0,255,136,0.12); color: #00ff88; }
+        .difficulty.intermediate { background: rgba(255,204,0,0.12); color: #ffcc00; }
+        .difficulty.advanced { background: rgba(255,68,68,0.12); color: #ff6666; }
+
+        .project p { color: #bbb; line-height: 1.6; margin-bottom: 10px; font-size: 0.92rem; }
+        .project p strong { color: #fff; }
+
+        .how-it-works {
+            background: rgba(0,0,0,0.3);
+            border-radius: 10px;
+            padding: 16px;
+            margin: 14px 0;
+            font-size: 0.85rem;
+            line-height: 1.7;
+            color: #aaa;
+        }
+        .how-it-works strong { color: #00d4ff; }
+
+        .revenue {
+            display: inline-block;
+            background: rgba(0,255,136,0.1);
+            border: 1px solid rgba(0,255,136,0.2);
+            border-radius: 8px;
+            padding: 6px 14px;
+            font-size: 0.85rem;
+            color: #00ff88;
+            font-weight: 600;
+            margin-top: 6px;
+        }
+
+        .stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 10px;
+        }
+        .stack-item {
+            background: rgba(255,255,255,0.06);
+            padding: 3px 10px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            color: #999;
+        }
+
+        .section-divider {
+            text-align: center;
+            color: #444;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin: 36px 0 24px;
+            position: relative;
+        }
+        .section-divider::before,
+        .section-divider::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 30%;
+            height: 1px;
+            background: rgba(255,255,255,0.08);
+        }
+        .section-divider::before { left: 0; }
+        .section-divider::after { right: 0; }
+
+        code {
+            background: rgba(0,212,255,0.1);
+            color: #00d4ff;
+            padding: 2px 7px;
+            border-radius: 4px;
+            font-size: 0.82rem;
+            font-family: 'SF Mono', Monaco, monospace;
+        }
+
+        .footer {
+            text-align: center;
+            color: #444;
+            font-size: 0.8rem;
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.06);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Jetson Orin Nano — Project Ideas</h1>
+        <p class="subtitle">24/7 local AI for $2/month in electricity</p>
+        <p class="hero-stats">
+            <span>67 TOPS</span> GPU &middot; <span>8GB</span> VRAM &middot; <span>25W</span> power &middot; <span>$0</span> API costs
+        </p>
+
+        <!-- ============================== -->
+        <div class="section-divider">Trading &amp; Prediction Markets</div>
+        <!-- ============================== -->
+
+        <!-- 1. POLYMARKET MONITOR -->
+        <div class="project">
+            <div class="project-head">
+                <div class="project-icon">📊</div>
+                <div class="project-title">
+                    <h2>Polymarket Prediction Market Bot</h2>
+                    <div class="tags">
+                        <span class="tag money">Revenue</span>
+                        <span class="tag auto">24/7</span>
+                    </div>
+                </div>
+                <span class="difficulty intermediate">Intermediate</span>
+            </div>
+            <p>Monitor prediction markets 24/7. The LLM reads breaking news, compares it to current market odds,
+               and spots mispricings before the market catches up. When confident, it places trades automatically.</p>
+            <div class="how-it-works">
+                <strong>Loop (every 30s):</strong><br>
+                1. Pull market data from Polymarket CLOB API (prices, volume, orderbook)<br>
+                2. Pull news from RSS feeds, Twitter/X API, Reddit<br>
+                3. Feed to local LLM: <em>"Breaking: [headline]. Market for [event] is at 62%. Is this mispriced?"</em><br>
+                4. LLM returns confidence score + direction<br>
+                5. If confidence > threshold → execute trade via API<br>
+                6. Track P&L, adjust thresholds based on performance
+            </div>
+            <p><strong>Edge:</strong> Speed. News breaks → your bot reads it in 1-2 seconds → trades before manual traders react.
+               Most Polymarket traders are checking Twitter and manually trading. An always-on bot with sub-5s reaction time has an edge.</p>
+            <div class="revenue">Potential: $50-500+/month depending on bankroll and market activity</div>
+            <div class="stack">
+                <span class="stack-item">Polymarket CLOB API</span>
+                <span class="stack-item">gemma3:4b or llama3:8b</span>
+                <span class="stack-item">Python asyncio</span>
+                <span class="stack-item">RSS / Twitter API</span>
+            </div>
+        </div>
+
+        <!-- 2. PREDICTION MARKET ARBITRAGE -->
+        <div class="project">
+            <div class="project-head">
+                <div class="project-icon">🔄</div>
+                <div class="project-title">
+                    <h2>Cross-Platform Prediction Arbitrage</h2>
+                    <div class="tags">
+                        <span class="tag money">Revenue</span>
+                        <span class="tag auto">24/7</span>
+                        <span class="tag easy">Low Risk</span>
+                    </div>
+                </div>
+                <span class="difficulty intermediate">Intermediate</span>
+            </div>
+            <p>The same event is listed on Polymarket, Kalshi, Manifold, and PredictIt — often at different prices.
+               Buy "Yes" on one platform where it's cheap, buy "No" on another where it's cheap.
+               Guaranteed profit if the prices are far enough apart.</p>
+            <div class="how-it-works">
+                <strong>How it works:</strong><br>
+                1. Scrape/API-poll the same markets across 3-4 platforms<br>
+                2. LLM matches equivalent markets across platforms (different titles, same event)<br>
+                3. Calculate arbitrage spread: if Platform A says 55% and Platform B says 40% for the same event → buy Yes on B, buy No on A<br>
+                4. Alert or auto-execute when spread > fees<br>
+                5. No prediction needed — pure math arbitrage
+            </div>
+            <p><strong>Edge:</strong> The LLM's job is matching markets across platforms (they use different titles/descriptions).
+               The actual arb is just math. Low risk because you're hedged on both sides.</p>
+            <div class="revenue">Potential: $20-200/month (limited by liquidity and arb opportunities)</div>
+            <div class="stack">
+                <span class="stack-item">Polymarket API</span>
+                <span class="stack-item">Kalshi API</span>
+                <span class="stack-item">Manifold API</span>
+                <span class="stack-item">gemma3:4b (market matching)</span>
+            </div>
+        </div>
+
+        <!-- 3. CRYPTO SIGNAL BOT -->
+        <div class="project">
+            <div class="project-head">
+                <div class="project-icon">🪙</div>
+                <div class="project-title">
+                    <h2>Crypto Sentiment Trading Bot</h2>
+                    <div class="tags">
+                        <span class="tag money">Revenue</span>
+                        <span class="tag auto">24/7</span>
+                        <span class="tag data">Data-Heavy</span>
+                    </div>
+                </div>
+                <span class="difficulty advanced">Advanced</span>
+            </div>
+            <p>Monitor crypto Twitter, Reddit, Telegram channels 24/7. LLM scores sentiment in real-time.
+               When sentiment shifts hard (whale tweets, exchange news, regulatory announcements), trade before the price moves.</p>
+            <div class="how-it-works">
+                <strong>Pipeline:</strong><br>
+                1. Stream tweets from crypto influencers, r/cryptocurrency, Telegram alpha channels<br>
+                2. LLM classifies each: bullish/bearish/neutral + confidence + which token<br>
+                3. Aggregate sentiment score per token over 5min/1hr/24hr windows<br>
+                4. When sentiment spikes (2+ std devs) → execute trade on DEX via API<br>
+                5. Take profit / stop loss rules built in
+            </div>
+            <p><strong>Why local matters:</strong> Cloud API at $0.01/call x 10,000 tweets/day = $100/day.
+               Local LLM = $0. You can afford to analyze EVERYTHING instead of filtering.</p>
+            <div class="revenue">Potential: Highly variable. $0 to $1000+/month. High risk.</div>
+            <div class="stack">
+                <span class="stack-item">Twitter/X API</span>
+                <span class="stack-item">DEX APIs (Jupiter, Uniswap)</span>
+                <span class="stack-item">llama3:8b</span>
+                <span class="stack-item">WebSocket feeds</span>
+            </div>
+        </div>
+
+        <!-- 4. SPORTS BETTING -->
+        <div class="project">
+            <div class="project-head">
+                <div class="project-icon">🏈</div>
+                <div class="project-title">
+                    <h2>Sports Betting Edge Finder</h2>
+                    <div class="tags">
+                        <span class="tag money">Revenue</span>
+                        <span class="tag data">Data-Heavy</span>
+                    </div>
+                </div>
+                <span class="difficulty advanced">Advanced</span>
+            </div>
+            <p>Scrape odds from multiple sportsbooks. Feed injury reports, weather, lineup changes, and historical data
+               to the LLM. Find lines that are off — especially live in-game where books are slow to update.</p>
+            <div class="how-it-works">
+                <strong>How it works:</strong><br>
+                1. Pull odds from 5+ sportsbooks via Odds API<br>
+                2. Monitor injury/lineup feeds (Twitter, team sites, ESPN)<br>
+                3. LLM: <em>"Star QB just listed as doubtful. Current line is -7. What should it be?"</em><br>
+                4. If LLM + historical model agree the line should move → bet before it does<br>
+                5. Also catch cross-book arbitrage (same game, different odds)
+            </div>
+            <div class="revenue">Potential: $100-1000+/month for serious bettors</div>
+            <div class="stack">
+                <span class="stack-item">The Odds API</span>
+                <span class="stack-item">ESPN/team APIs</span>
+                <span class="stack-item">gemma3:4b</span>
+                <span class="stack-item">Historical stats DB</span>
+            </div>
+        </div>
+
+        <!-- ============================== -->
+        <div class="section-divider">Social Media &amp; Content</div>
+        <!-- ============================== -->
+
+        <!-- 5. TWITTER BOT -->
+        <div class="project">
+            <div class="project-head">
+                <div class="project-icon">🐦</div>
+                <div class="project-title">
+                    <h2>AI Twitter/X Growth Bot</h2>
+                    <div class="tags">
+                        <span class="tag growth">Growth</span>
+                        <span class="tag auto">24/7</span>
+                    </div>
+                </div>
+                <span class="difficulty beginner">Beginner</span>
+            </div>
+            <p>Grow a Twitter account on autopilot. The LLM monitors trending topics in your niche,
+               writes relevant replies to big accounts (first-reply advantage), and posts original takes.
+               Engagement farming that runs while you sleep.</p>
+            <div class="how-it-works">
+                <strong>Daily cycle:</strong><br>
+                1. Monitor 50-100 accounts in your niche for new tweets<br>
+                2. LLM generates thoughtful replies (not spam — actually good takes)<br>
+                3. Post replies within 60 seconds of original tweet (first-reply = most visibility)<br>
+                4. Generate 3-5 original tweets per day based on trending topics<br>
+                5. Track which style of replies get most engagement → LLM learns what works<br>
+                6. Goal: build audience → monetize via sponsored posts, affiliate links, or funnel to product
+            </div>
+            <p><strong>Why 24/7 matters:</strong> The money reply is the FIRST reply. A bot that responds in 60 seconds
+               to a 500K-follower account's tweet gets seen by thousands. You can't do that manually at 3am.</p>
+            <div class="revenue">Potential: $0 short-term → $500-5000/month once account grows (sponsored posts, affiliates)</div>
+            <div class="stack">
+                <span class="stack-item">Twitter/X API</span>
+                <span class="stack-item">gemma3:4b</span>
+                <span class="stack-item">Python tweepy</span>
+            </div>
+        </div>
+
+        <!-- 6. CONTENT REPURPOSING -->
+        <div class="project">
+            <div class="project-head">
+                <div class="project-icon">📝</div>
+                <div class="project-title">
+                    <h2>Content Repurposing Engine</h2>
+                    <div class="tags">
+                        <span class="tag growth">Growth</span>
+                        <span class="tag auto">Automated</span>
+                        <span class="tag easy">Easy</span>
+                    </div>
+                </div>
+                <span class="difficulty beginner">Beginner</span>
+            </div>
+            <p>Feed it one long-form piece (blog post, YouTube transcript, podcast) and it generates
+               10-20 social media posts across platforms. One piece of content → Twitter thread + LinkedIn post +
+               Instagram captions + Reddit post + newsletter blurb. Runs automatically on a schedule.</p>
+            <div class="how-it-works">
+                <strong>Pipeline:</strong><br>
+                1. Drop a blog post / YouTube URL / podcast RSS into a watched folder<br>
+                2. LLM extracts key points, quotes, hot takes<br>
+                3. Reformats for each platform (thread for Twitter, professional for LinkedIn, casual for Reddit)<br>
+                4. Schedules posts across the week<br>
+                5. You review and approve (or full auto if you trust it)
+            </div>
+            <div class="revenue">Potential: Save 10+ hours/week on content. Sell as a service for $200-500/month per client.</div>
+            <div class="stack">
+                <span class="stack-item">gemma3:4b</span>
+                <span class="stack-item">Platform APIs</span>
+                <span class="stack-item">Cron scheduler</span>
+            </div>
+        </div>
+
+        <!-- ============================== -->
+        <div class="section-divider">Automation &amp; Monitoring</div>
+        <!-- ============================== -->
+
+        <!-- 7. DEAL/DROP MONITOR -->
+        <div class="project">
+            <div class="project-head">
+                <div class="project-icon">🎯</div>
+                <div class="project-title">
+                    <h2>Deal/Drop/Restock Monitor</h2>
+                    <div class="tags">
+                        <span class="tag money">Revenue</span>
+                        <span class="tag auto">24/7</span>
+                        <span class="tag easy">Easy</span>
+                    </div>
+                </div>
+                <span class="difficulty beginner">Beginner</span>
+            </div>
+            <p>Monitor product pages for price drops, restocks, or limited drops. LLM understands context —
+               not just "price changed" but "this is actually a good deal compared to historical pricing."
+               Auto-buy or alert you instantly.</p>
+            <div class="how-it-works">
+                <strong>Use cases:</strong><br>
+                1. <strong>Sneaker drops:</strong> Monitor Nike/Adidas → auto-checkout on release<br>
+                2. <strong>GPU restocks:</strong> Watch Newegg/Amazon for RTX cards at MSRP<br>
+                3. <strong>Amazon price tracking:</strong> Monitor 100s of products, buy when price dips<br>
+                4. <strong>Ticket drops:</strong> Concert/event tickets at face value<br>
+                5. Vision model can read CAPTCHA-like elements that simple scrapers can't
+            </div>
+            <p><strong>Why LLM > simple scraper:</strong> Pages change layout, use anti-bot measures, show different content.
+               The vision model actually "sees" the page like a human. Harder to block.</p>
+            <div class="revenue">Potential: $100-2000/month reselling limited drops</div>
+            <div class="stack">
+                <span class="stack-item">Playwright (your browser agent!)</span>
+                <span class="stack-item">Vision model for CAPTCHAs</span>
+                <span class="stack-item">gemma3:4b</span>
+                <span class="stack-item">Discord/Telegram alerts</span>
+            </div>
+        </div>
+
+        <!-- 8. JOB/FREELANCE MONITOR -->
+        <div class="project">
+            <div class="project-head">
+                <div class="project-icon">💼</div>
+                <div class="project-title">
+                    <h2>Freelance Job Sniper</h2>
+                    <div class="tags">
+                        <span class="tag money">Revenue</span>
+                        <span class="tag auto">24/7</span>
+                    </div>
+                </div>
+                <span class="difficulty intermediate">Intermediate</span>
+            </div>
+            <p>Monitor Upwork, Fiverr, Freelancer for new job postings in your skill area.
+               LLM reads the posting, evaluates if it's a good fit, and drafts a personalized proposal.
+               First to respond = most likely to win. Bot responds in under 2 minutes, 24/7.</p>
+            <div class="how-it-works">
+                <strong>Pipeline:</strong><br>
+                1. Poll job boards every 60 seconds for new listings matching your skills<br>
+                2. LLM evaluates: good budget? realistic scope? scam?<br>
+                3. LLM drafts personalized proposal referencing specific details from the posting<br>
+                4. Sends proposal (or queues for your review)<br>
+                5. Track win rate → fine-tune on proposals that got accepted
+            </div>
+            <div class="revenue">Potential: 2-5x more freelance income from faster, better proposals</div>
+            <div class="stack">
+                <span class="stack-item">Job board APIs / scraping</span>
+                <span class="stack-item">gemma3:4b</span>
+                <span class="stack-item">Email/platform APIs</span>
+            </div>
+        </div>
+
+        <!-- 9. SMART EMAIL -->
+        <div class="project">
+            <div class="project-head">
+                <div class="project-icon">📧</div>
+                <div class="project-title">
+                    <h2>AI Email Assistant / Cold Outreach</h2>
+                    <div class="tags">
+                        <span class="tag growth">Growth</span>
+                        <span class="tag auto">Automated</span>
+                    </div>
+                </div>
+                <span class="difficulty beginner">Beginner</span>
+            </div>
+            <p>Two modes: (1) Auto-respond to incoming emails with smart drafts. (2) Cold outreach —
+               research a lead (LinkedIn, company site), write a personalized email, send on schedule.
+               All local, no data going to cloud APIs.</p>
+            <div class="how-it-works">
+                <strong>Cold outreach mode:</strong><br>
+                1. Import lead list (name, company, LinkedIn URL)<br>
+                2. LLM scrapes their profile/site, finds talking points<br>
+                3. Generates personalized email (not template — actually references their work)<br>
+                4. Sends on optimal schedule (Tuesday 9am, follow-up Thursday)<br>
+                5. Track opens/replies → LLM learns which angles work
+            </div>
+            <p><strong>Privacy advantage:</strong> All processing is local. No customer data goes to OpenAI/Anthropic servers.
+               This matters for B2B sales and regulated industries.</p>
+            <div class="revenue">Potential: Sell as a service, $300-1000/month per client</div>
+            <div class="stack">
+                <span class="stack-item">Gmail/SMTP API</span>
+                <span class="stack-item">gemma3:4b</span>
+                <span class="stack-item">LinkedIn scraping</span>
+            </div>
+        </div>
+
+        <!-- 9.5 RECRUITER OUTREACH -->
+        <div class="project">
+            <div class="project-head">
+                <div class="project-icon">🎯</div>
+                <div class="project-title">
+                    <h2>AI Recruiter & Job Outreach Agent</h2>
+                    <div class="tags">
+                        <span class="tag money">Career</span>
+                        <span class="tag auto">24/7</span>
+                        <span class="tag growth">Networking</span>
+                    </div>
+                </div>
+                <span class="difficulty intermediate">Intermediate</span>
+            </div>
+            <p>A 24/7 job hunting machine. Monitors job boards, tailors your resume per posting,
+               identifies and messages recruiters on LinkedIn, follows up automatically, and tracks
+               every application in a pipeline. Like having a full-time career assistant working for you around the clock.</p>
+            <div class="how-it-works">
+                <strong>The full pipeline:</strong><br><br>
+                <strong>1. Job Discovery (always running):</strong><br>
+                &nbsp;&nbsp;- Monitor LinkedIn, Indeed, Glassdoor, Lever, Greenhouse job boards every 15 min<br>
+                &nbsp;&nbsp;- LLM reads each posting: does this match my skills? Is it worth applying?<br>
+                &nbsp;&nbsp;- Score and rank by fit, salary range, company reputation<br>
+                &nbsp;&nbsp;- Alert you instantly for high-match roles (Slack/Discord/text)<br><br>
+                <strong>2. Resume Tailoring (per application):</strong><br>
+                &nbsp;&nbsp;- Base resume stored locally<br>
+                &nbsp;&nbsp;- LLM reads the job posting, identifies key requirements and buzzwords<br>
+                &nbsp;&nbsp;- Rewrites bullet points to match what they're looking for<br>
+                &nbsp;&nbsp;- Generates a custom cover letter referencing specific company details<br>
+                &nbsp;&nbsp;- Outputs PDF ready to submit<br><br>
+                <strong>3. Recruiter Finder & Outreach:</strong><br>
+                &nbsp;&nbsp;- For each target company, find recruiters/hiring managers on LinkedIn<br>
+                &nbsp;&nbsp;- LLM researches their profile: what do they post about? What teams do they hire for?<br>
+                &nbsp;&nbsp;- Writes personalized connection request: <em>"Saw your post about [X]. I've been working on [Y] which is similar..."</em><br>
+                &nbsp;&nbsp;- NOT spam templates — actually references their content<br>
+                &nbsp;&nbsp;- Vision model can navigate LinkedIn pages that block scrapers<br><br>
+                <strong>4. Follow-Up Engine:</strong><br>
+                &nbsp;&nbsp;- Track every outreach in a local database<br>
+                &nbsp;&nbsp;- Auto follow-up after 3 days, 7 days, 14 days<br>
+                &nbsp;&nbsp;- Each follow-up adds new value (share a relevant article, mention new project)<br>
+                &nbsp;&nbsp;- Stop sequence when they reply or after 3 attempts<br><br>
+                <strong>5. Network Warming:</strong><br>
+                &nbsp;&nbsp;- Engage with target recruiters' posts BEFORE reaching out<br>
+                &nbsp;&nbsp;- LLM writes thoughtful comments on their LinkedIn posts<br>
+                &nbsp;&nbsp;- Like and share their content<br>
+                &nbsp;&nbsp;- When you finally DM them, they recognize your name<br>
+                &nbsp;&nbsp;- This is how actual networking works — just automated<br><br>
+                <strong>6. Interview Prep (bonus):</strong><br>
+                &nbsp;&nbsp;- When you get a callback, LLM researches the company deeply<br>
+                &nbsp;&nbsp;- Scrapes Glassdoor for interview questions from that company<br>
+                &nbsp;&nbsp;- Generates practice Q&A based on your resume + their job posting<br>
+                &nbsp;&nbsp;- Studies their product, recent news, competitors so you walk in informed
+            </div>
+            <p><strong>Why this works:</strong> Job hunting is a numbers game. Most people apply to 5-10 jobs and give up.
+               This bot applies to 50+/week with custom resumes, messages 20 recruiters with personalized notes,
+               and follows up on everything — all while you sleep.
+               The people who get jobs fast aren't smarter, they just have more at-bats.</p>
+            <p><strong>Why local LLM matters:</strong> Your resume, job history, salary expectations, and networking strategy
+               stay on YOUR device. Nothing goes to cloud servers. Plus zero API cost means you can research 100 recruiters
+               a day without worrying about the bill.</p>
+            <div class="revenue">Potential: Land a job 2-5x faster. If that means starting a $150K job 2 months earlier = $25K in extra income.</div>
+            <div class="stack">
+                <span class="stack-item">LinkedIn (Playwright browser agent)</span>
+                <span class="stack-item">Indeed / Greenhouse APIs</span>
+                <span class="stack-item">gemma3:4b</span>
+                <span class="stack-item">LaTeX/PDF resume generation</span>
+                <span class="stack-item">SQLite (application tracker)</span>
+                <span class="stack-item">Slack/Discord alerts</span>
+            </div>
+        </div>
+
+        <!-- ATS RESUME ENGINE -->
+        <div class="project" style="border: 1px solid rgba(0,212,255,0.25);">
+            <div class="project-head">
+                <div class="project-icon">📄</div>
+                <div class="project-title">
+                    <h2>ATS Resume Rewriter & Cover Letter Generator</h2>
+                    <div class="tags">
+                        <span class="tag money">Career</span>
+                        <span class="tag easy">Easy</span>
+                        <span class="tag auto">Run Now</span>
+                    </div>
+                </div>
+                <span class="difficulty beginner">Beginner</span>
+            </div>
+            <p>Feed it your master resume + a job posting URL. It rewrites your resume to beat ATS (Applicant Tracking Systems),
+               match keywords, and generates a custom cover letter — all locally, all free.
+               <strong>You can build this right now on your Mac before the Jetson even arrives.</strong></p>
+            <div class="how-it-works">
+                <strong>How ATS works (and how to beat it):</strong><br>
+                &nbsp;&nbsp;- Companies use ATS software (Workday, Greenhouse, Lever) to auto-filter resumes<br>
+                &nbsp;&nbsp;- ATS scores your resume by keyword match against the job description<br>
+                &nbsp;&nbsp;- If your resume doesn't hit ~70% keyword match, a human never sees it<br>
+                &nbsp;&nbsp;- Most people send the same resume everywhere and get filtered out<br><br>
+
+                <strong>What the bot does:</strong><br><br>
+
+                <strong>1. Parse Your Master Resume:</strong><br>
+                &nbsp;&nbsp;- Store your full work history, skills, projects, education in structured JSON<br>
+                &nbsp;&nbsp;- This is your "source of truth" — every real thing you've done<br>
+                &nbsp;&nbsp;- Update it once, generate infinite tailored versions<br><br>
+
+                <strong>2. Analyze the Job Posting:</strong><br>
+                &nbsp;&nbsp;- Paste a URL or job description<br>
+                &nbsp;&nbsp;- LLM extracts: required skills, nice-to-haves, keywords, tone, seniority level<br>
+                &nbsp;&nbsp;- Identifies ATS keywords: exact phrases like "CI/CD", "cross-functional", "stakeholder management"<br>
+                &nbsp;&nbsp;- Detects the company's language style (startup casual vs enterprise formal)<br><br>
+
+                <strong>3. Rewrite Resume for THIS Job:</strong><br>
+                &nbsp;&nbsp;- Maps your experience to their requirements (which of your projects match which requirement)<br>
+                &nbsp;&nbsp;- Rewrites bullet points using THEIR keywords naturally (not keyword stuffing)<br>
+                &nbsp;&nbsp;- Reorders sections to put most relevant experience first<br>
+                &nbsp;&nbsp;- Adjusts your title/summary to mirror their job title<br>
+                &nbsp;&nbsp;- Quantifies results: "improved performance" → "reduced API latency by 40%"<br>
+                &nbsp;&nbsp;- Keeps it honest — only rephrases what you actually did, never fabricates<br><br>
+
+                <strong>4. Generate Cover Letter:</strong><br>
+                &nbsp;&nbsp;- References the specific company, role, and team<br>
+                &nbsp;&nbsp;- Connects your experience to their mission/product<br>
+                &nbsp;&nbsp;- Mentions something specific about the company (recent news, product launch)<br>
+                &nbsp;&nbsp;- Matches their tone (startup energy vs corporate professional)<br>
+                &nbsp;&nbsp;- 3 paragraphs: hook → why I'm a fit → call to action<br><br>
+
+                <strong>5. ATS Score Check:</strong><br>
+                &nbsp;&nbsp;- Compares your tailored resume against the job description<br>
+                &nbsp;&nbsp;- Reports keyword match percentage<br>
+                &nbsp;&nbsp;- Flags missing keywords you could add<br>
+                &nbsp;&nbsp;- Checks formatting (ATS hates tables, columns, headers, fancy fonts)<br>
+                &nbsp;&nbsp;- Ensures clean plain-text parsing (what ATS actually sees vs what you see)<br><br>
+
+                <strong>6. Output:</strong><br>
+                &nbsp;&nbsp;- Clean PDF resume (ATS-friendly formatting)<br>
+                &nbsp;&nbsp;- Cover letter PDF<br>
+                &nbsp;&nbsp;- ATS score report<br>
+                &nbsp;&nbsp;- Suggested LinkedIn message to the recruiter for this role
+            </div>
+            <p><strong>The Claude Projects angle:</strong> You can set this up as a Claude Project right now —
+               upload your master resume as project context, then for each job posting just paste the description
+               and ask it to tailor. But that costs API credits per use. The local version on Ollama/Jetson = unlimited
+               rewrites for free. Apply to 50 jobs a day, each with a custom resume, zero cost.</p>
+            <p><strong>Real talk:</strong> The difference between "applied with generic resume" and "applied with
+               ATS-optimized tailored resume + personalized cover letter" is the difference between getting ghosted
+               and getting interviews. Most people are too lazy to customize per job. You automate it.</p>
+            <div class="revenue">Potential: Land interviews 3-5x faster. Could also sell as a service — $20-50 per resume tailoring.</div>
+            <div class="stack">
+                <span class="stack-item">gemma3:4b (works on Mac NOW)</span>
+                <span class="stack-item">Python + Jinja2 templates</span>
+                <span class="stack-item">WeasyPrint or LaTeX (PDF gen)</span>
+                <span class="stack-item">Job board scraping</span>
+                <span class="stack-item">SQLite (track applications)</span>
+            </div>
+            <pre style="color: #00ff88;">
+# One command — give it a URL, get back tailored resume + cover letter:
+python3 resume_bot.py --url "https://jobs.lever.co/company/abc123"
+
+# Or batch mode — feed it 20 job URLs, wake up to 20 custom applications:
+python3 resume_bot.py --batch job_urls.txt
+
+# Output:
+#   output/company_role_resume.pdf
+#   output/company_role_cover.pdf
+#   output/company_role_ats_score.txt
+#   output/company_role_recruiter_msg.txt</pre>
+
+            <div class="how-it-works" style="margin-top: 14px;">
+                <strong>Under the hood when you run that command:</strong><br>
+                1. Playwright fetches the job page (handles JS-rendered sites like Lever, Greenhouse, Workday)<br>
+                2. LLM extracts structured job requirements from the raw HTML<br>
+                3. Loads your master resume from <code>~/.resume/master.json</code><br>
+                4. LLM rewrites bullets, reorders sections, injects keywords<br>
+                5. LLM generates cover letter referencing the company specifically<br>
+                6. ATS keyword scorer compares resume vs job description<br>
+                7. LLM writes a short LinkedIn DM for the hiring manager<br>
+                8. Exports everything as clean PDFs<br>
+                9. Logs to SQLite so you can track what you applied to
+            </div>
+        </div>
+
+        <!-- ============================== -->
+        <div class="section-divider">Data &amp; Intelligence</div>
+        <!-- ============================== -->
+
+        <!-- 10. NEWS AGGREGATOR -->
+        <div class="project">
+            <div class="project-head">
+                <div class="project-icon">📰</div>
+                <div class="project-title">
+                    <h2>AI News Aggregator & Newsletter</h2>
+                    <div class="tags">
+                        <span class="tag growth">Growth</span>
+                        <span class="tag auto">24/7</span>
+                        <span class="tag easy">Easy</span>
+                    </div>
+                </div>
+                <span class="difficulty beginner">Beginner</span>
+            </div>
+            <p>Monitor 100+ sources (RSS, Twitter, Reddit, HN). LLM reads everything, extracts what matters,
+               groups by topic, writes summaries. Auto-generates a daily/weekly newsletter.
+               Monetize with sponsorships once you build subscribers.</p>
+            <div class="how-it-works">
+                <strong>Daily flow:</strong><br>
+                1. Pull 500+ articles/posts from your source list<br>
+                2. LLM reads each: relevant? important? what's the key point?<br>
+                3. Cluster into themes, rank by importance<br>
+                4. Generate newsletter with summaries + hot takes<br>
+                5. Send via Mailchimp/Substack at scheduled time<br>
+                6. Free to process 500 articles/day — cloud API would cost $5-10/day
+            </div>
+            <div class="revenue">Potential: $200-2000/month with sponsorships at 5K+ subscribers</div>
+            <div class="stack">
+                <span class="stack-item">RSS / News APIs</span>
+                <span class="stack-item">gemma3:4b</span>
+                <span class="stack-item">Substack / Mailchimp</span>
+            </div>
+        </div>
+
+        <!-- 11. COMPETITOR MONITOR -->
+        <div class="project">
+            <div class="project-head">
+                <div class="project-icon">🔍</div>
+                <div class="project-title">
+                    <h2>Competitor Intelligence Monitor</h2>
+                    <div class="tags">
+                        <span class="tag data">Intel</span>
+                        <span class="tag auto">24/7</span>
+                    </div>
+                </div>
+                <span class="difficulty intermediate">Intermediate</span>
+            </div>
+            <p>Track competitors' websites, social media, job postings, press releases, and product pages.
+               LLM detects meaningful changes — new feature launched, hiring surge (about to grow),
+               pricing changed, new partnership announced. Daily digest of what competitors are doing.</p>
+            <div class="how-it-works">
+                <strong>Monitors:</strong><br>
+                1. Website changes (new pages, pricing updates, feature announcements)<br>
+                2. Job postings (hiring ML engineers? building something new)<br>
+                3. Social media activity spikes<br>
+                4. App store updates (new version = new features)<br>
+                5. SEC filings, press releases, patent applications<br>
+                6. Vision model can diff screenshots of their site to catch visual changes
+            </div>
+            <div class="revenue">Potential: Sell as SaaS to businesses, $100-500/month per client</div>
+            <div class="stack">
+                <span class="stack-item">Web scraping / Playwright</span>
+                <span class="stack-item">Vision model (page diffs)</span>
+                <span class="stack-item">gemma3:4b</span>
+                <span class="stack-item">Slack/email alerts</span>
+            </div>
+        </div>
+
+        <!-- 12. PERSONAL RESEARCH AGENT -->
+        <div class="project">
+            <div class="project-head">
+                <div class="project-icon">🧠</div>
+                <div class="project-title">
+                    <h2>Personal Research / Second Brain</h2>
+                    <div class="tags">
+                        <span class="tag data">Knowledge</span>
+                        <span class="tag auto">Always On</span>
+                    </div>
+                </div>
+                <span class="difficulty intermediate">Intermediate</span>
+            </div>
+            <p>A private AI assistant that runs 24/7 on your network. Indexes your notes, bookmarks, PDFs, code repos.
+               Ask it anything and it searches YOUR data. Like having a personal ChatGPT that knows everything you know —
+               except it's completely private and free.</p>
+            <div class="how-it-works">
+                <strong>Setup:</strong><br>
+                1. Index your documents (Obsidian notes, PDFs, bookmarks, code) into a local vector DB<br>
+                2. LLM + RAG (Retrieval Augmented Generation) for Q&A over your data<br>
+                3. Web UI accessible from any device on your network<br>
+                4. Continuously indexes new content as you add it<br>
+                5. Tools like Open WebUI give you a ChatGPT-like interface for free
+            </div>
+            <div class="stack">
+                <span class="stack-item">Open WebUI</span>
+                <span class="stack-item">ChromaDB / Qdrant</span>
+                <span class="stack-item">gemma3:4b or llama3:8b</span>
+                <span class="stack-item">LangChain</span>
+            </div>
+        </div>
+
+        <!-- ============================== -->
+        <div class="section-divider">Robotics &amp; Hardware</div>
+        <!-- ============================== -->
+
+        <!-- DRONE PROJECT -->
+        <div class="project" style="border: 1px solid rgba(255,136,68,0.25);">
+            <div class="project-head">
+                <div class="project-icon">🚁</div>
+                <div class="project-title">
+                    <h2>Autonomous AI Drone</h2>
+                    <div class="tags">
+                        <span class="tag easy">Your Project</span>
+                        <span class="tag data">Vision</span>
+                        <span class="tag auto">Autonomous</span>
+                    </div>
+                </div>
+                <span class="difficulty advanced">Advanced</span>
+            </div>
+            <p>Mount the Jetson Orin Nano on a 5"+ drone. Real-time object detection, autonomous navigation,
+               follow-me mode, search patterns — all processed on-board with zero cloud dependency.
+               Flies and thinks independently.</p>
+            <div class="how-it-works">
+                <strong>What the Jetson does on-board:</strong><br>
+                &nbsp;&nbsp;- <strong>Real-time object detection</strong> (YOLOv8) — sees people, cars, animals, obstacles at 30fps<br>
+                &nbsp;&nbsp;- <strong>Obstacle avoidance</strong> — depth estimation from camera feed, steers around trees/buildings<br>
+                &nbsp;&nbsp;- <strong>Follow-me mode</strong> — locks onto a person, follows at set distance/altitude<br>
+                &nbsp;&nbsp;- <strong>Autonomous waypoint navigation</strong> — give it GPS points, it flies the route handling obstacles<br>
+                &nbsp;&nbsp;- <strong>Search & rescue patterns</strong> — grid search with person detection, marks locations<br>
+                &nbsp;&nbsp;- <strong>Visual landing</strong> — recognizes landing pad, precision auto-land<br>
+                &nbsp;&nbsp;- <strong>LLM mission planning</strong> — "survey this field" → AI plans the flight path<br><br>
+
+                <strong>Architecture:</strong><br>
+                &nbsp;&nbsp;- <strong>Pixhawk flight controller</strong> — handles motors, stabilization, GPS, low-level flight<br>
+                &nbsp;&nbsp;- <strong>Jetson Orin Nano</strong> — companion computer, runs AI models, makes high-level decisions<br>
+                &nbsp;&nbsp;- <strong>UART bridge</strong> — Jetson tells Pixhawk "go left" via MAVLink protocol<br>
+                &nbsp;&nbsp;- <strong>CSI camera</strong> — direct camera feed into Jetson GPU<br>
+                &nbsp;&nbsp;- Pixhawk flies the drone. Jetson is the brain that tells it where to go.<br><br>
+
+                <strong>Software stack:</strong><br>
+                &nbsp;&nbsp;- <strong>ArduPilot / PX4</strong> — open-source autopilot firmware on Pixhawk<br>
+                &nbsp;&nbsp;- <strong>MAVSDK / DroneKit</strong> — Python API to command the drone<br>
+                &nbsp;&nbsp;- <strong>YOLOv8</strong> — real-time object detection<br>
+                &nbsp;&nbsp;- <strong>TensorRT</strong> — NVIDIA's optimizer, makes models 2-3x faster on Jetson<br>
+                &nbsp;&nbsp;- <strong>ROS2</strong> (optional) — robot operating system for complex behaviors
+            </div>
+
+            <h3 style="color:#fff; margin: 16px 0 8px; font-size: 1rem;">Parts List</h3>
+            <div class="how-it-works">
+                <strong>Option A: Kit (easiest, ~$200)</strong><br>
+                &nbsp;&nbsp;- Holybro X500 V2 Kit — frame + Pixhawk + motors + ESCs + GPS<br>
+                &nbsp;&nbsp;- Has Jetson mounting holes built in<br>
+                &nbsp;&nbsp;- Just add: battery, camera, radio, your Jetson<br><br>
+
+                <strong>Option B: DIY 5" build (~$300-400)</strong><br>
+                &nbsp;&nbsp;- 5-7" carbon frame (iFlight Chimera, TBS Source One) — $30-50<br>
+                &nbsp;&nbsp;- Pixhawk 6C Mini flight controller — $80-120<br>
+                &nbsp;&nbsp;- 4x motors (2306 1700KV for 6") — $40-60<br>
+                &nbsp;&nbsp;- 4-in-1 ESC 35A — $30-50<br>
+                &nbsp;&nbsp;- 5" or 6" props — $10<br>
+                &nbsp;&nbsp;- 4S 1500-2200mAh LiPo battery — $25-35<br>
+                &nbsp;&nbsp;- IMX219 CSI camera (plugs directly into Jetson) — $15<br>
+                &nbsp;&nbsp;- GPS module (BN-880) — $20<br>
+                &nbsp;&nbsp;- Radio receiver (ExpressLRS) — $20<br>
+                &nbsp;&nbsp;- Radio transmitter (RadioMaster Pocket) — $60<br><br>
+
+                <strong>You already have:</strong> Jetson Orin Nano ($249)<br>
+                <strong>Total additional:</strong> $200-400 depending on route<br>
+                <strong>Flight time estimate:</strong> 10-15 min with Jetson on board (25W draw from battery)
+            </div>
+
+            <p style="margin-top: 14px;"><strong>Your advantage:</strong> You already know Python, Playwright automation, vision models, state machines.
+               A drone autopilot is literally a state machine (IDLE → TAKEOFF → NAVIGATE → HOVER → LAND) with vision input —
+               same architecture as your browser agent. The Jetson just happens to be strapped to a flying robot instead of sitting on a desk.</p>
+
+            <div class="stack">
+                <span class="stack-item">Jetson Orin Nano (on-board)</span>
+                <span class="stack-item">Pixhawk 6C (flight controller)</span>
+                <span class="stack-item">ArduPilot / PX4</span>
+                <span class="stack-item">YOLOv8 + TensorRT</span>
+                <span class="stack-item">MAVSDK Python</span>
+                <span class="stack-item">IMX219 camera</span>
+            </div>
+            <pre style="color: #ff8844;">
+# The Drone Dojo has a full Jetson Nano drone course:
+# https://dojofordrones.com/jetson-nano-drone/
+
+# Holybro X500 V2 (frame kit with Jetson mounting):
+# https://holybro.com/products/x500-v2-kits
+
+# Holybro Pixhawk-Jetson combo board:
+# https://holybro.com/products/pixhawk-jetson-baseboard</pre>
+        </div>
+
+        <!-- ============================== -->
+        <div class="section-divider">Browser Automation (Your Expertise)</div>
+        <!-- ============================== -->
+
+        <!-- 13. BROWSER AGENT AS A SERVICE -->
+        <div class="project">
+            <div class="project-head">
+                <div class="project-icon">🤖</div>
+                <div class="project-title">
+                    <h2>Browser Agent as a Service</h2>
+                    <div class="tags">
+                        <span class="tag money">Revenue</span>
+                        <span class="tag auto">Automated</span>
+                        <span class="tag growth">Scalable</span>
+                    </div>
+                </div>
+                <span class="difficulty advanced">Advanced</span>
+            </div>
+            <p>You already built a vision-based browser agent. Package it as a service.
+               Businesses need bots that can navigate websites that block traditional scrapers —
+               your agent literally "sees" the page and clicks through like a human.</p>
+            <div class="how-it-works">
+                <strong>Use cases clients pay for:</strong><br>
+                1. <strong>Data extraction:</strong> Scrape sites that block bots (Zillow, LinkedIn, etc.)<br>
+                2. <strong>Form filling:</strong> Automate repetitive web forms (insurance quotes, job applications)<br>
+                3. <strong>Compliance testing:</strong> Check if websites meet accessibility/legal requirements<br>
+                4. <strong>QA testing:</strong> Vision-based testing that doesn't break when HTML changes<br>
+                5. <strong>Competitor price monitoring:</strong> Read prices from any site, even image-based ones
+            </div>
+            <p><strong>Your advantage:</strong> You have a working agent + fine-tuned vision model +
+               the Playwright infrastructure. Most people are still trying to figure out basic Selenium.</p>
+            <div class="revenue">Potential: $500-5000/month per client as a service</div>
+            <div class="stack">
+                <span class="stack-item">Your figure-agent codebase</span>
+                <span class="stack-item">Fine-tuned vision model</span>
+                <span class="stack-item">Playwright</span>
+                <span class="stack-item">FastAPI wrapper</span>
+            </div>
+        </div>
+
+        <!-- BOTTOM LINE -->
+        <div class="project" style="border: 1px solid rgba(0,255,136,0.2); margin-top: 36px;">
+            <h2 style="color: #00ff88; margin-bottom: 12px;">The Big Picture</h2>
+            <p>The Jetson is a <strong>$249 AI server that runs 24/7 for $2/month</strong>.
+               Every project above would cost $100-500/month in cloud API fees. With local inference, the marginal cost of
+               every LLM call is zero. That changes the math on everything — you can afford to monitor 10,000 tweets/day,
+               analyze 500 news articles, poll 50 prediction markets every 30 seconds. Things that are too expensive
+               on cloud APIs become free.</p>
+            <p style="margin-top: 12px;"><strong>Start with one project. Get it profitable. Stack the next one on the same hardware.</strong>
+               The Jetson doesn't care if it's running a trading bot AND a Twitter bot AND a news aggregator —
+               they take turns using the GPU. One device, multiple income streams.</p>
+        </div>
+
+        <p class="footer">Built for the Jetson Orin Nano Super &middot; February 2026</p>
+    </div>
+</body>
+</html>

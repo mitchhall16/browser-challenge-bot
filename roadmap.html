@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Figure Agent — Roadmap</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            color: #e0e0e0;
+            padding: 40px 20px;
+        }
+        .container { max-width: 900px; margin: 0 auto; }
+        h1 {
+            text-align: center;
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #00d4ff, #00ff88);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .subtitle {
+            text-align: center;
+            color: #888;
+            margin-bottom: 40px;
+            font-size: 0.95rem;
+        }
+
+        /* Stats bar */
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            margin-bottom: 40px;
+        }
+        .stat {
+            background: rgba(255,255,255,0.07);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .stat-num { font-size: 1.8rem; font-weight: 700; color: #00ff88; }
+        .stat-num.yellow { color: #ffcc00; }
+        .stat-num.blue { color: #00d4ff; }
+        .stat-num.orange { color: #ff8844; }
+        .stat-lbl { color: #999; font-size: 0.8rem; margin-top: 4px; }
+
+        /* Phases */
+        .phase {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 28px;
+            margin-bottom: 24px;
+            border: 1px solid rgba(255,255,255,0.08);
+            position: relative;
+        }
+        .phase-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 16px;
+        }
+        .phase-badge {
+            background: rgba(0,212,255,0.15);
+            color: #00d4ff;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+        .phase-badge.done { background: rgba(0,255,136,0.15); color: #00ff88; }
+        .phase-badge.current { background: rgba(255,204,0,0.15); color: #ffcc00; }
+        .phase-badge.next { background: rgba(255,136,68,0.15); color: #ff8844; }
+        .phase-badge.future { background: rgba(170,100,255,0.15); color: #aa64ff; }
+
+        .phase h2 {
+            font-size: 1.3rem;
+            color: #fff;
+        }
+        .phase p {
+            color: #bbb;
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+
+        /* Checklist */
+        .checklist { list-style: none; padding: 0; }
+        .checklist li {
+            padding: 8px 0 8px 32px;
+            position: relative;
+            color: #ccc;
+            line-height: 1.5;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+        }
+        .checklist li:last-child { border-bottom: none; }
+        .checklist li::before {
+            content: '';
+            position: absolute;
+            left: 4px;
+            top: 12px;
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+            border: 2px solid #555;
+        }
+        .checklist li.done::before {
+            background: #00ff88;
+            border-color: #00ff88;
+        }
+        .checklist li.done::after {
+            content: '✓';
+            position: absolute;
+            left: 7px;
+            top: 9px;
+            font-size: 13px;
+            color: #1a1a2e;
+            font-weight: bold;
+        }
+        .checklist li.done { color: #888; }
+
+        code {
+            background: rgba(0,212,255,0.1);
+            color: #00d4ff;
+            padding: 2px 7px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-family: 'SF Mono', Monaco, monospace;
+        }
+        pre {
+            background: rgba(0,0,0,0.4);
+            border-radius: 8px;
+            padding: 16px;
+            overflow-x: auto;
+            margin: 12px 0;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            color: #ccc;
+            font-family: 'SF Mono', Monaco, monospace;
+        }
+
+        /* Decision box */
+        .decision {
+            background: rgba(255,204,0,0.08);
+            border: 1px solid rgba(255,204,0,0.2);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 16px 0;
+        }
+        .decision h3 { color: #ffcc00; font-size: 1rem; margin-bottom: 8px; }
+        .option {
+            display: flex;
+            gap: 12px;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .option:last-child { border-bottom: none; }
+        .option-tag {
+            background: rgba(255,255,255,0.1);
+            padding: 2px 10px;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            white-space: nowrap;
+            height: fit-content;
+            margin-top: 2px;
+        }
+        .option-tag.rec { background: rgba(0,255,136,0.15); color: #00ff88; }
+
+        .divider {
+            border: none;
+            border-top: 1px solid rgba(255,255,255,0.08);
+            margin: 32px 0;
+        }
+        .footer {
+            text-align: center;
+            color: #555;
+            font-size: 0.8rem;
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Figure Agent Roadmap</h1>
+        <p class="subtitle">Cloud agent → Local inference → Fine-tuned vision model</p>
+
+        <!-- Training Data Stats -->
+        <div class="stats-bar">
+            <div class="stat">
+                <div class="stat-num">154</div>
+                <div class="stat-lbl">Total Runs</div>
+            </div>
+            <div class="stat">
+                <div class="stat-num blue">2,629</div>
+                <div class="stat-lbl">Screenshots</div>
+            </div>
+            <div class="stat">
+                <div class="stat-num yellow">44</div>
+                <div class="stat-lbl">Telemetry Files</div>
+            </div>
+            <div class="stat">
+                <div class="stat-num orange">138</div>
+                <div class="stat-lbl">Run Logs</div>
+            </div>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- PHASE 1: CURRENT AGENT (DONE) -->
+        <!-- ============================================ -->
+        <div class="phase">
+            <div class="phase-header">
+                <span class="phase-badge done">Complete</span>
+                <h2>Phase 1 — Cloud Agent (Anthropic API)</h2>
+            </div>
+            <p>The current working agent. Uses Claude Haiku via cloud API for all vision calls.
+               ~$0.50/run, ~2s per vision call, accurate bounding boxes.</p>
+            <ul class="checklist">
+                <li class="done">State machine: INIT → CLICK_START → POPUP_CLEARING → MODAL → CODE_REVEAL → CODE_ENTRY</li>
+                <li class="done">Vision extraction with Claude Haiku (popups, modals, code panels, entry fields)</li>
+                <li class="done">Perceptual hash caching (skip duplicate screenshots)</li>
+                <li class="done">DOM hybrid mode — vision for understanding, DOM shortcuts for speed</li>
+                <li class="done">Telemetry + screenshot logging per run</li>
+                <li class="done">Speed profiles: careful (0.3s), fast (0.1s), turbo (0.05s)</li>
+                <li class="done">30-level challenge completion</li>
+            </ul>
+            <pre>python3 agent_v66.py --url "https://serene-frangipane-7fd25b.netlify.app" --speed fast</pre>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- PHASE 2: OLLAMA BACKEND (DONE) -->
+        <!-- ============================================ -->
+        <div class="phase">
+            <div class="phase-header">
+                <span class="phase-badge done">Complete</span>
+                <h2>Phase 2 — Ollama Backend Integration</h2>
+            </div>
+            <p>Added local inference support. Same agent, but vision calls go to a local Ollama server
+               instead of Claude API. Zero API cost once running.</p>
+            <ul class="checklist">
+                <li class="done">VisionClient supports <code>backend="ollama"</code> parameter</li>
+                <li class="done"><code>_extract_ollama()</code> method — sends screenshots to Ollama /api/chat</li>
+                <li class="done">CLI args: <code>--backend ollama --ollama-model gemma3:4b</code></li>
+                <li class="done">Same post-processing pipeline (scale bboxes, offset, backfill, cache)</li>
+                <li class="done">Modelfile.agent with baked-in system prompt</li>
+                <li>Tested on Mac — works but too slow (28s/call) and inaccurate bboxes on CPU</li>
+                <li>Needs GPU hardware for viable speed</li>
+            </ul>
+            <pre>python3 agent_v66.py --backend ollama --ollama-model gemma3:4b --speed fast</pre>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- PHASE 3: JETSON SETUP (NEXT) -->
+        <!-- ============================================ -->
+        <div class="phase">
+            <div class="phase-header">
+                <span class="phase-badge current">Next Up</span>
+                <h2>Phase 3 — Jetson Orin Nano Super Setup</h2>
+            </div>
+            <p>Ordered: NVIDIA Jetson Orin Nano Super Developer Kit ($249).
+               67 TOPS, 8GB VRAM, 1024 CUDA cores. Run vision models locally with GPU acceleration.</p>
+
+            <h3 style="color:#fff; margin: 16px 0 8px;">What You Need</h3>
+            <ul class="checklist">
+                <li>Jetson Orin Nano Super Developer Kit (ordered)</li>
+                <li>128GB microSD card (~$12)</li>
+                <li>Ethernet cable (router → Jetson)</li>
+                <li>USB keyboard + mouse + HDMI monitor (first-time setup only)</li>
+            </ul>
+
+            <h3 style="color:#fff; margin: 16px 0 8px;">Setup Steps</h3>
+            <ul class="checklist">
+                <li>Flash JetPack 6 OS onto microSD card from your Mac
+                    <br><code>Use NVIDIA SDK Manager or Balena Etcher</code></li>
+                <li>Insert microSD, plug in ethernet + keyboard + monitor, power on</li>
+                <li>Complete Ubuntu first-time setup (username, password, WiFi optional)</li>
+                <li>Set power mode to MAXN for best performance
+                    <br><code>sudo nvpmodel -m 0 && sudo jetson_clocks</code></li>
+                <li>Install Ollama
+                    <br><code>curl -fsSL https://ollama.com/install.sh | sh</code></li>
+                <li>Pull vision model
+                    <br><code>ollama pull gemma3:4b</code></li>
+                <li>Copy Modelfile.agent to Jetson and build custom model
+                    <br><code>scp Modelfile.agent jetson@&lt;IP&gt;:~/</code>
+                    <br><code>ssh jetson@&lt;IP&gt; "ollama create agent-vision -f ~/Modelfile.agent"</code></li>
+                <li>Configure Ollama to listen on network (not just localhost)
+                    <br><code>sudo systemctl edit ollama</code>
+                    <br>Add: <code>Environment="OLLAMA_HOST=0.0.0.0"</code>
+                    <br><code>sudo systemctl restart ollama</code></li>
+                <li>Find Jetson's IP address
+                    <br><code>hostname -I</code></li>
+                <li>Test from Mac
+                    <br><code>curl http://&lt;JETSON_IP&gt;:11434/api/tags</code></li>
+                <li>Run agent pointing at Jetson
+                    <br><code>python3 agent_v66.py --backend ollama --ollama-model agent-vision --speed fast</code></li>
+            </ul>
+
+            <div class="decision">
+                <h3>Ollama Vision Models — Full Lineup</h3>
+                <p style="color:#999; margin-bottom: 12px; font-size: 0.85rem;">
+                    All free to download from <code>ollama pull &lt;model&gt;</code>.
+                    Jetson has 8GB VRAM — models under ~6GB run fully on GPU. Bigger models will be slower (CPU offload).
+                    You can swap models anytime with <code>--ollama-model</code>.
+                </p>
+
+                <h4 style="color:#00ff88; margin: 12px 0 6px; font-size: 0.85rem;">FITS ON JETSON (8GB) — Start Here</h4>
+                <div class="option">
+                    <span class="option-tag rec">gemma3:4b</span>
+                    <span><strong>3.3 GB</strong> — Google. ~1-2s/call. Good general vision, fast. Start here.</span>
+                </div>
+                <div class="option">
+                    <span class="option-tag">Qwen2.5-VL:3B</span>
+                    <span><strong>~2 GB</strong> — Alibaba. ~1s/call. Best small model for OCR + bounding boxes.</span>
+                </div>
+                <div class="option">
+                    <span class="option-tag">Qwen3-VL:4B</span>
+                    <span><strong>~3 GB</strong> — Alibaba (newest). Best accuracy at this size. Try if gemma3 struggles.</span>
+                </div>
+                <div class="option">
+                    <span class="option-tag">llama3.2-vision</span>
+                    <span><strong>4.9 GB</strong> — Meta. ~2-3s/call. Solid all-rounder, tighter VRAM fit.</span>
+                </div>
+                <div class="option">
+                    <span class="option-tag">granite3.2-vision</span>
+                    <span><strong>~2 GB</strong> — IBM. Good at documents and structured data. Lightweight.</span>
+                </div>
+                <div class="option">
+                    <span class="option-tag">moondream</span>
+                    <span><strong>~1.7 GB</strong> — Tiny and fast. Good for simple yes/no vision checks.</span>
+                </div>
+
+                <h4 style="color:#ffcc00; margin: 16px 0 6px; font-size: 0.85rem;">NEEDS MORE VRAM (16-24GB) — Future Upgrade</h4>
+                <div class="option">
+                    <span class="option-tag">gemma3:12b</span>
+                    <span><strong>~8 GB</strong> — Borderline fit. Much better accuracy. May need quantization.</span>
+                </div>
+                <div class="option">
+                    <span class="option-tag">llama3.2-vision:11b</span>
+                    <span><strong>~7.8 GB</strong> — Best accuracy at this tier. Sweet spot for quality vs speed.</span>
+                </div>
+                <div class="option">
+                    <span class="option-tag">Qwen2.5-VL:7B</span>
+                    <span><strong>~5 GB</strong> — Could fit! Excellent OCR + spatial reasoning. Worth trying.</span>
+                </div>
+
+                <h4 style="color:#aa64ff; margin: 16px 0 6px; font-size: 0.85rem;">CLOUD ONLY (48GB+) — Use Hosted</h4>
+                <div class="option">
+                    <span class="option-tag">gemma3:27b</span>
+                    <span><strong>~18 GB</strong> — Near Claude-quality vision. Needs RTX 4090 or cloud GPU.</span>
+                </div>
+                <div class="option">
+                    <span class="option-tag">llama3.2-vision:90b</span>
+                    <span><strong>~55 GB</strong> — Best open-source vision model period. Cloud only (A100/H100).</span>
+                </div>
+                <div class="option">
+                    <span class="option-tag">Qwen2.5-VL:72B</span>
+                    <span><strong>~45 GB</strong> — Rivals GPT-4V on benchmarks. Cloud only.</span>
+                </div>
+
+                <p style="color:#666; margin-top: 16px; font-size: 0.8rem;">
+                    Strategy: Start with gemma3:4b on Jetson. If bbox accuracy is bad, try Qwen2.5-VL:3B or Qwen3-VL:4B.
+                    Fine-tuning any of these on your 2,629 screenshots will dramatically improve accuracy for your specific task.
+                    If you later get a desktop GPU (RTX 3090/4090), the 12B-27B models become available and are significantly better.
+                </p>
+            </div>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- PHASE 4: FINE-TUNING -->
+        <!-- ============================================ -->
+        <div class="phase">
+            <div class="phase-header">
+                <span class="phase-badge next">Phase 4</span>
+                <h2>Fine-Tune Vision Model on Your Data</h2>
+            </div>
+            <p>You have 2,629 labeled screenshots from 154 runs. Each screenshot filename encodes the
+               state (POPUP_CLEARING, MODAL_SCROLLING, CODE_REVEAL, etc.) and the run logs record
+               the correct action taken. This is a ready-made training dataset.</p>
+
+            <h3 style="color:#fff; margin: 16px 0 8px;">Is Your Data Enough?</h3>
+            <p style="color: #00ff88; font-weight: 600;">Yes. 500-1000 clean pairs is plenty for a LoRA fine-tune.
+               You have 2,629 screenshots + screen recordings. After filtering for successful runs,
+               you'll easily have 1000+ high-quality training examples.</p>
+
+            <h3 style="color:#fff; margin: 16px 0 8px;">Pipeline Steps</h3>
+            <ul class="checklist">
+                <li>Write auto-labeling script
+                    <br>Read each <code>run.log</code> → match timestamps to screenshots → generate
+                    <code>(screenshot, correct_action_JSON)</code> pairs</li>
+                <li>Filter to successful runs only (completed levels = correct actions)</li>
+                <li>Export as JSONL training format
+<pre>{
+  "image": "003_POPUP_CLEARING_L1_R0.png",
+  "conversations": [
+    {"role": "user", "content": "What popups are visible and how do I dismiss them?"},
+    {"role": "assistant", "content": "{\"has_popups\":true,\"popups\":[...]}"}
+  ]
+}</pre></li>
+                <li>Fine-tune with Unsloth (fastest, runs on Jetson)
+<pre>pip install unsloth
+# Load base model, attach LoRA adapter, train on your JSONL
+# ~30 min for 1000 examples on Jetson GPU</pre></li>
+                <li>Export fine-tuned model to GGUF format
+                    <br><code>python export_to_gguf.py --model ./finetuned --output agent-vision-ft.gguf</code></li>
+                <li>Import into Ollama with updated Modelfile
+<pre># Modelfile.finetuned
+FROM ./agent-vision-ft.gguf
+PARAMETER temperature 0
+PARAMETER num_predict 1024</pre>
+                    <br><code>ollama create agent-vision-ft -f Modelfile.finetuned</code></li>
+                <li>Test fine-tuned model vs base model on held-out screenshots</li>
+                <li>Run agent with fine-tuned model
+                    <br><code>python3 agent_v66.py --backend ollama --ollama-model agent-vision-ft --speed fast</code></li>
+            </ul>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- PHASE 5: HOSTED ALTERNATIVE -->
+        <!-- ============================================ -->
+        <div class="phase">
+            <div class="phase-header">
+                <span class="phase-badge future">Alternative</span>
+                <h2>Phase 5 — Hosted Fine-Tuned Model (Cloud Option)</h2>
+            </div>
+            <p>If you want faster inference than the Jetson without Anthropic prices,
+               you can host your fine-tuned model on a cloud GPU platform.</p>
+
+            <div class="decision">
+                <h3>Hosting Options</h3>
+                <div class="option">
+                    <span class="option-tag rec">Together.ai</span>
+                    <span>Upload fine-tune, pay ~$0.10/M tokens. 10-50x cheaper than Claude. Fast GPUs.</span>
+                </div>
+                <div class="option">
+                    <span class="option-tag">Replicate</span>
+                    <span>Upload model, pay per second of compute. Good for bursty usage.</span>
+                </div>
+                <div class="option">
+                    <span class="option-tag">RunPod</span>
+                    <span>Rent a GPU ($0.20-0.50/hr), run Ollama on it. Full control. Most like the Jetson but faster.</span>
+                </div>
+                <div class="option">
+                    <span class="option-tag">Lambda</span>
+                    <span>GPU cloud, A100/H100 by the hour. Best for training + serving.</span>
+                </div>
+            </div>
+        </div>
+
+        <hr class="divider">
+
+        <!-- ============================================ -->
+        <!-- SUMMARY -->
+        <!-- ============================================ -->
+        <div class="phase" style="border: 1px solid rgba(0,255,136,0.2);">
+            <div class="phase-header">
+                <h2>The Path</h2>
+            </div>
+            <table style="width:100%; border-collapse: collapse;">
+                <tr style="border-bottom: 1px solid rgba(255,255,255,0.08);">
+                    <td style="padding: 10px; color: #00ff88; font-weight: 600;">Now</td>
+                    <td style="padding: 10px;">Run agent with Anthropic cloud (~$0.50/run, works great)</td>
+                </tr>
+                <tr style="border-bottom: 1px solid rgba(255,255,255,0.08);">
+                    <td style="padding: 10px; color: #ffcc00; font-weight: 600;">Jetson arrives</td>
+                    <td style="padding: 10px;">Set up Ollama + gemma3:4b, test with base model (~1-2s/call, free)</td>
+                </tr>
+                <tr style="border-bottom: 1px solid rgba(255,255,255,0.08);">
+                    <td style="padding: 10px; color: #ff8844; font-weight: 600;">Fine-tune</td>
+                    <td style="padding: 10px;">Train on your 2,629 screenshots → custom model that knows exactly what to do</td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px; color: #aa64ff; font-weight: 600;">End state</td>
+                    <td style="padding: 10px;">Fully local, zero API cost, generalizable vision agent that learned from experience</td>
+                </tr>
+            </table>
+        </div>
+
+        <p class="footer">Figure Agent Roadmap — February 2026</p>
+    </div>
+</body>
+</html>
