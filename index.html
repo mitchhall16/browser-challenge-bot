@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jetson Orin Nano — Project Hub</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            color: #e0e0e0;
+            padding: 40px 20px;
+        }
+        .container { max-width: 800px; margin: 0 auto; }
+        h1 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 8px;
+            background: linear-gradient(90deg, #00d4ff, #00ff88, #ffcc00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .subtitle {
+            text-align: center;
+            color: #888;
+            margin-bottom: 16px;
+            font-size: 0.95rem;
+        }
+        .hero-stats {
+            text-align: center;
+            margin-bottom: 40px;
+            color: #666;
+            font-size: 0.85rem;
+        }
+        .hero-stats span { color: #00d4ff; font-weight: 600; }
+
+        .section-label {
+            color: #555;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin: 32px 0 16px;
+            padding-left: 4px;
+        }
+
+        a.card {
+            display: block;
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 24px 28px;
+            margin-bottom: 16px;
+            border: 1px solid rgba(255,255,255,0.08);
+            text-decoration: none;
+            color: inherit;
+            transition: border-color 0.2s, transform 0.15s;
+        }
+        a.card:hover {
+            border-color: rgba(0,212,255,0.4);
+            transform: translateY(-2px);
+        }
+        .card-head {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 10px;
+        }
+        .card-icon {
+            font-size: 1.8rem;
+            width: 50px; height: 50px;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(255,255,255,0.07);
+            border-radius: 14px;
+            flex-shrink: 0;
+        }
+        .card-title h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+        .card-title .count {
+            font-size: 0.8rem;
+            color: #00d4ff;
+            font-weight: 600;
+        }
+        .card p {
+            color: #999;
+            font-size: 0.88rem;
+            line-height: 1.5;
+            padding-left: 66px;
+        }
+        .card .tags {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            padding-left: 66px;
+            margin-top: 10px;
+        }
+        .tag {
+            padding: 3px 10px;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            background: rgba(255,255,255,0.06);
+            color: #888;
+        }
+        .tag.green { background: rgba(0,255,136,0.12); color: #00ff88; }
+        .tag.blue { background: rgba(0,212,255,0.12); color: #00d4ff; }
+        .tag.yellow { background: rgba(255,204,0,0.12); color: #ffcc00; }
+        .tag.orange { background: rgba(255,136,68,0.12); color: #ff8844; }
+        .tag.purple { background: rgba(170,100,255,0.12); color: #aa64ff; }
+
+        .hardware-status {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 24px 28px;
+            margin: 32px 0;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .hardware-status h3 {
+            color: #fff;
+            font-size: 1rem;
+            margin-bottom: 14px;
+        }
+        .hw-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+            font-size: 0.88rem;
+        }
+        .hw-item:last-child { border-bottom: none; }
+        .hw-status {
+            padding: 2px 10px;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+        .hw-status.ordered { background: rgba(255,204,0,0.12); color: #ffcc00; }
+        .hw-status.have { background: rgba(0,255,136,0.12); color: #00ff88; }
+
+        .footer {
+            text-align: center;
+            color: #444;
+            font-size: 0.8rem;
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.06);
+        }
+        .footer a { color: #555; text-decoration: none; }
+        .footer a:hover { color: #888; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Jetson Project Hub</h1>
+        <p class="subtitle">$249 AI computer. Runs 24/7. Zero API costs.</p>
+        <p class="hero-stats">
+            <span>67 TOPS</span> GPU &middot;
+            <span>8GB</span> VRAM &middot;
+            <span>25W</span> power &middot;
+            <span>25+</span> project ideas
+        </p>
+
+        <!-- HARDWARE STATUS -->
+        <div class="hardware-status">
+            <h3>Hardware Status</h3>
+            <div class="hw-item">
+                <span>NVIDIA Jetson Orin Nano Super</span>
+                <span class="hw-status ordered">Ordered</span>
+            </div>
+            <div class="hw-item">
+                <span>Xbox 360 Kinect + USB Adapter</span>
+                <span class="hw-status ordered">Ordered</span>
+            </div>
+            <div class="hw-item">
+                <span>128GB microSD Card</span>
+                <span class="hw-status ordered">Ordered</span>
+            </div>
+            <div class="hw-item">
+                <span>Ethernet Cable</span>
+                <span class="hw-status ordered">Ordered</span>
+            </div>
+        </div>
+
+        <!-- SOFTWARE & AI -->
+        <div class="section-label">Software & AI Projects</div>
+
+        <a class="card" href="jetson-ideas.html">
+            <div class="card-head">
+                <div class="card-icon">💡</div>
+                <div class="card-title">
+                    <h2>Software & AI Ideas</h2>
+                    <span class="count">15 projects</span>
+                </div>
+            </div>
+            <p>Trading bots, prediction markets, Twitter automation, ATS resume rewriter,
+               recruiter outreach, content engines, deal monitors, competitor intel, and more.
+               All running locally, 24/7, zero API cost.</p>
+            <div class="tags">
+                <span class="tag green">Polymarket Bot</span>
+                <span class="tag blue">Twitter Growth</span>
+                <span class="tag yellow">Resume / ATS</span>
+                <span class="tag orange">Crypto Sentiment</span>
+                <span class="tag purple">News Aggregator</span>
+                <span class="tag">+ 10 more</span>
+            </div>
+        </a>
+
+        <!-- ROBOTICS & HARDWARE -->
+        <div class="section-label">Robotics & Hardware</div>
+
+        <a class="card" href="jetson-robotics.html">
+            <div class="card-head">
+                <div class="card-icon">🤖</div>
+                <div class="card-title">
+                    <h2>Robotics & Hardware Projects</h2>
+                    <span class="count">9 projects</span>
+                </div>
+            </div>
+            <p>3D room scanning, MoveScan moving company tool, autonomous drone,
+               AI security cameras, robot arm, voice assistant, and more.
+               Real hardware builds with parts lists and pricing.</p>
+            <div class="tags">
+                <span class="tag green">MoveScan (Moving Co.)</span>
+                <span class="tag blue">3D Room Scanner</span>
+                <span class="tag orange">Autonomous Drone</span>
+                <span class="tag purple">Robot Arm</span>
+                <span class="tag yellow">Voice Assistant</span>
+                <span class="tag">+ 4 more</span>
+            </div>
+        </a>
+
+        <!-- AGENT ROADMAP -->
+        <div class="section-label">Browser Agent</div>
+
+        <a class="card" href="roadmap.html">
+            <div class="card-head">
+                <div class="card-icon">🧠</div>
+                <div class="card-title">
+                    <h2>Figure Agent Roadmap</h2>
+                    <span class="count">5 phases</span>
+                </div>
+            </div>
+            <p>Cloud agent → Ollama local backend → Jetson GPU inference → Fine-tune on 2,629 screenshots
+               → Fully local, zero-cost, generalizable vision agent.</p>
+            <div class="tags">
+                <span class="tag green">Cloud Agent (Done)</span>
+                <span class="tag green">Ollama Backend (Done)</span>
+                <span class="tag yellow">Jetson Setup (Next)</span>
+                <span class="tag orange">Fine-Tuning</span>
+                <span class="tag purple">Hosted Option</span>
+            </div>
+        </a>
+
+        <!-- DASHBOARD -->
+        <a class="card" href="dashboard.html">
+            <div class="card-head">
+                <div class="card-icon">📊</div>
+                <div class="card-title">
+                    <h2>Run Dashboard</h2>
+                    <span class="count">154 runs logged</span>
+                </div>
+            </div>
+            <p>Live dashboard for browser challenge bot runs.
+               Performance metrics, level completion, API costs, and telemetry.</p>
+            <div class="tags">
+                <span class="tag blue">Telemetry</span>
+                <span class="tag yellow">Cost Tracking</span>
+                <span class="tag">Charts</span>
+            </div>
+        </a>
+
+        <p class="footer">
+            Built with a Jetson Orin Nano Super &middot; February 2026<br>
+            <a href="https://github.com/mitchhall16/browser-challenge-bot">GitHub</a>
+        </p>
+    </div>
+</body>
+</html>
