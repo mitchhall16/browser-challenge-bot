@@ -906,6 +906,253 @@ python3 resume_bot.py --batch job_urls.txt
         </div>
 
         <!-- ============================== -->
+        <div class="section-divider">AI Content Generation</div>
+        <!-- ============================== -->
+
+        <!-- AI INFLUENCER -->
+        <div class="project" style="border: 1px solid rgba(0,212,255,0.3);">
+            <div class="project-head">
+                <div class="project-icon">🎨</div>
+                <div class="project-title">
+                    <h2>AI Influencer / Character Images</h2>
+                    <div class="tags">
+                        <span class="tag money">Revenue</span>
+                        <span class="tag auto">Automated</span>
+                        <span class="tag growth">TikTok / IG</span>
+                    </div>
+                </div>
+                <span class="difficulty intermediate">Intermediate</span>
+            </div>
+            <p>Create a consistent AI character — same face, same style, different poses/outfits/settings.
+               Use it for TikTok, Instagram, product promotion, or faceless brand accounts.
+               The character looks the same in every image because you train a LoRA on a specific look.</p>
+
+            <h3 style="color:#fff; margin: 16px 0 8px; font-size: 1rem;">Roadmap — Step by Step</h3>
+
+            <div class="how-it-works" style="margin-bottom: 16px;">
+                <strong style="color:#00ff88;">Phase 1: Get Stable Diffusion Running on Jetson (Day 1)</strong><br><br>
+
+                <strong>1. Install the engine:</strong><br>
+                &nbsp;&nbsp;Install <strong>stable-diffusion-webui</strong> (Automatic1111) or <strong>ComfyUI</strong> on the Jetson.<br>
+                &nbsp;&nbsp;Both have web UIs — you open a browser on your Mac and use the Jetson as the backend.<br>
+                &nbsp;&nbsp;ComfyUI is better for automation (node-based, scriptable). A1111 is easier to start with.<br><br>
+
+                &nbsp;&nbsp;<code>git clone https://github.com/AUTOMATIC1111/stable-diffusion-webui.git</code><br>
+                &nbsp;&nbsp;<code>cd stable-diffusion-webui && python3 launch.py --medvram --xformers</code><br>
+                &nbsp;&nbsp;<code>--medvram</code> is critical — tells it to be careful with 8GB memory.<br><br>
+
+                <strong>2. Download a base model:</strong><br>
+                &nbsp;&nbsp;Start with <strong>SD 1.5</strong> (smaller, fits easily, tons of LoRAs available).<br>
+                &nbsp;&nbsp;Download from CivitAI or HuggingFace:<br>
+                &nbsp;&nbsp;- <strong>Realistic Vision V6</strong> — photorealistic people<br>
+                &nbsp;&nbsp;- <strong>DreamShaper 8</strong> — versatile, good at everything<br>
+                &nbsp;&nbsp;- <strong>majicMIX Realistic</strong> — great for AI influencer look<br><br>
+
+                <strong>3. Test it:</strong><br>
+                &nbsp;&nbsp;Open the web UI from your Mac: <code>http://jetson-ip:7860</code><br>
+                &nbsp;&nbsp;Type a prompt like: "professional photo of a young woman in a coffee shop, natural lighting, 8k"<br>
+                &nbsp;&nbsp;Wait ~30-60 sec. You should get a 512x512 image.<br>
+                &nbsp;&nbsp;If this works, you're set up.
+            </div>
+
+            <div class="how-it-works" style="margin-bottom: 16px;">
+                <strong style="color:#00ff88;">Phase 2: Create Your Character with LoRA (Day 2-3)</strong><br><br>
+
+                <strong>What's a LoRA?</strong><br>
+                &nbsp;&nbsp;A small add-on model (~50-200MB) trained to generate a specific person, style, or concept.<br>
+                &nbsp;&nbsp;It learns "this is what my character looks like" and keeps the face consistent across images.<br><br>
+
+                <strong>Option A: Use a pre-made LoRA (fastest)</strong><br>
+                &nbsp;&nbsp;Browse <strong>CivitAI.com</strong> — thousands of free LoRAs for face styles, aesthetics, poses.<br>
+                &nbsp;&nbsp;Download one that matches the vibe you want. Drop it in the <code>models/Lora/</code> folder.<br>
+                &nbsp;&nbsp;In your prompt add: <code>&lt;lora:model_name:0.7&gt;</code> to activate it.<br><br>
+
+                <strong>Option B: Train your own LoRA (best for a unique character)</strong><br>
+                &nbsp;&nbsp;1. Generate or collect <strong>15-30 reference images</strong> of the look you want<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;(can use AI-generated images from cloud tools as your training set)<br>
+                &nbsp;&nbsp;2. Use <strong>kohya_ss</strong> training GUI on the Jetson or your laptop:<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;<code>git clone https://github.com/bmaltais/kohya_ss.git</code><br>
+                &nbsp;&nbsp;3. Training takes ~1-2 hours on the Jetson GPU for a basic LoRA<br>
+                &nbsp;&nbsp;4. Result: a ~50MB LoRA file that generates your character consistently<br><br>
+
+                <strong>The trigger word:</strong><br>
+                &nbsp;&nbsp;When you train a LoRA, you assign a trigger word like "myperson".<br>
+                &nbsp;&nbsp;Now every prompt with "myperson" generates your specific character:<br>
+                &nbsp;&nbsp;"myperson wearing a suit in a modern office" → your character in a suit<br>
+                &nbsp;&nbsp;"myperson at the beach sunset golden hour" → same person, beach setting<br>
+                &nbsp;&nbsp;"myperson holding a product, studio lighting" → product promo shot
+            </div>
+
+            <div class="how-it-works" style="margin-bottom: 16px;">
+                <strong style="color:#00ff88;">Phase 3: Build a Content Pipeline (Day 4-5)</strong><br><br>
+
+                <strong>Automate batch generation:</strong><br>
+                &nbsp;&nbsp;Write a Python script that sends prompts to the Stable Diffusion API:<br><br>
+
+                &nbsp;&nbsp;1. Create a list of 50 prompts (different outfits, locations, poses)<br>
+                &nbsp;&nbsp;2. Script sends each prompt to the SD API on the Jetson<br>
+                &nbsp;&nbsp;3. Each image generates in ~30-60 sec<br>
+                &nbsp;&nbsp;4. Run overnight → wake up to 50-100 new images<br>
+                &nbsp;&nbsp;5. Review, pick the best ones, trash the bad ones<br><br>
+
+                <strong>Prompt templates (copy and tweak):</strong><br>
+                &nbsp;&nbsp;- "myperson, Instagram selfie, golden hour, warm tones, bokeh background"<br>
+                &nbsp;&nbsp;- "myperson, gym outfit, fitness motivation, clean background, professional photo"<br>
+                &nbsp;&nbsp;- "myperson, casual streetwear, urban setting, candid shot, 35mm lens"<br>
+                &nbsp;&nbsp;- "myperson, professional headshot, studio lighting, neutral background"<br>
+                &nbsp;&nbsp;- "myperson, holding [product], product placement, soft lighting, 4k"<br><br>
+
+                <strong>Use the LLM to write prompts for you:</strong><br>
+                &nbsp;&nbsp;Ask gemma3 on the Jetson: "Write me 20 Stable Diffusion prompts for an AI influencer<br>
+                &nbsp;&nbsp;at different locations doing lifestyle content." It generates the prompts, SD generates the images.<br>
+                &nbsp;&nbsp;Fully automated prompt-to-image pipeline, all local.
+            </div>
+
+            <div class="how-it-works" style="margin-bottom: 16px;">
+                <strong style="color:#00ff88;">Phase 4: Post & Scale (Week 2+)</strong><br><br>
+
+                <strong>Content calendar:</strong><br>
+                &nbsp;&nbsp;- Jetson generates 10-20 images per night on autopilot<br>
+                &nbsp;&nbsp;- You review in the morning, pick 2-3 best ones<br>
+                &nbsp;&nbsp;- Add captions (gemma3 writes these too)<br>
+                &nbsp;&nbsp;- Schedule posts with Buffer, Later, or a Python bot<br><br>
+
+                <strong>TikTok slideshow format:</strong><br>
+                &nbsp;&nbsp;- AI images + trending audio + text overlay = viral format<br>
+                &nbsp;&nbsp;- No video editing needed — TikTok's built-in slideshow maker works<br>
+                &nbsp;&nbsp;- 5-10 AI images per slideshow, post 2-3x per day<br><br>
+
+                <strong>Monetization:</strong><br>
+                &nbsp;&nbsp;- Brand deals (once you hit 10K+ followers)<br>
+                &nbsp;&nbsp;- Promote your own products or affiliate links<br>
+                &nbsp;&nbsp;- Sell the AI-generated images as stock photos<br>
+                &nbsp;&nbsp;- Create multiple characters / niche accounts
+            </div>
+
+            <div class="stack">
+                <span class="stack-item">Stable Diffusion 1.5</span>
+                <span class="stack-item">ComfyUI or A1111</span>
+                <span class="stack-item">LoRA training (kohya_ss)</span>
+                <span class="stack-item">gemma3:4b (prompt writing + captions)</span>
+                <span class="stack-item">Python API scripting</span>
+                <span class="stack-item">CivitAI (model hub)</span>
+            </div>
+        </div>
+
+        <!-- FACELESS CONTENT -->
+        <div class="project" style="border: 1px solid rgba(0,212,255,0.3);">
+            <div class="project-head">
+                <div class="project-icon">📱</div>
+                <div class="project-title">
+                    <h2>Faceless AI Content — Quotes, Wallpapers, Art</h2>
+                    <div class="tags">
+                        <span class="tag money">Revenue</span>
+                        <span class="tag auto">Automated</span>
+                        <span class="tag easy">Easy Start</span>
+                    </div>
+                </div>
+                <span class="difficulty beginner">Beginner</span>
+            </div>
+            <p>No character needed. Generate AI art, motivational quotes on backgrounds, aesthetic wallpapers,
+               or niche-specific imagery. This is the easiest AI content play — no LoRA training, no consistency needed.
+               Every image is standalone. Some of the biggest TikTok/IG accounts do this.</p>
+
+            <h3 style="color:#fff; margin: 16px 0 8px; font-size: 1rem;">Roadmap — Step by Step</h3>
+
+            <div class="how-it-works" style="margin-bottom: 16px;">
+                <strong style="color:#00ff88;">Phase 1: Pick a Niche (Day 1)</strong><br><br>
+
+                <strong>Niches that work well with AI images:</strong><br>
+                &nbsp;&nbsp;- <strong>Motivational / stoic quotes</strong> — dark backgrounds, bold text, dramatic AI art<br>
+                &nbsp;&nbsp;- <strong>Aesthetic wallpapers</strong> — anime, cyberpunk, nature, minimal, dark academia<br>
+                &nbsp;&nbsp;- <strong>Fantasy / sci-fi art</strong> — landscapes, characters, concept art<br>
+                &nbsp;&nbsp;- <strong>Luxury / lifestyle</strong> — AI-generated mansions, cars, watches, interiors<br>
+                &nbsp;&nbsp;- <strong>Horror / creepy</strong> — unsettling AI imagery does massive numbers on TikTok<br>
+                &nbsp;&nbsp;- <strong>Historical "what if"</strong> — "Ancient Rome with modern technology" type content<br>
+                &nbsp;&nbsp;- <strong>Animal art</strong> — cats, dogs, fantasy animals in cool settings<br>
+                &nbsp;&nbsp;- <strong>Architecture / interior design</strong> — AI dream houses, room makeovers<br><br>
+
+                Pick one. The more specific the niche, the faster you grow.
+            </div>
+
+            <div class="how-it-works" style="margin-bottom: 16px;">
+                <strong style="color:#00ff88;">Phase 2: Set Up the Pipeline (Day 1-2)</strong><br><br>
+
+                <strong>1. Stable Diffusion on Jetson</strong> (same setup as above)<br>
+                &nbsp;&nbsp;Install A1111 or ComfyUI. Download a model that matches your niche:<br>
+                &nbsp;&nbsp;- Motivational/dark: <strong>DreamShaper 8</strong> or <strong>Juggernaut XL</strong><br>
+                &nbsp;&nbsp;- Anime/aesthetic: <strong>Anything V5</strong> or <strong>CounterfeitXL</strong><br>
+                &nbsp;&nbsp;- Photorealistic: <strong>Realistic Vision V6</strong><br>
+                &nbsp;&nbsp;- Fantasy/sci-fi: <strong>RPG V5</strong> or <strong>DreamShaper</strong><br><br>
+
+                <strong>2. gemma3 for text content</strong><br>
+                &nbsp;&nbsp;Ask the LLM to generate quotes, captions, and image prompts:<br>
+                &nbsp;&nbsp;"Give me 20 stoic philosophy quotes that would look good on a dark cinematic background"<br>
+                &nbsp;&nbsp;"Write me 15 Stable Diffusion prompts for cyberpunk city wallpapers"<br><br>
+
+                <strong>3. Automated overlay script (Python + Pillow)</strong><br>
+                &nbsp;&nbsp;For quote content, you need text on the image:<br>
+                &nbsp;&nbsp;- Generate background image with SD<br>
+                &nbsp;&nbsp;- Overlay quote text with a nice font using Pillow (Python image library)<br>
+                &nbsp;&nbsp;- Add subtle vignette / gradient for readability<br>
+                &nbsp;&nbsp;- Export at 1080x1920 (TikTok/Reels) or 1080x1080 (IG post)<br>
+                &nbsp;&nbsp;Total: ~20 lines of Python. SD makes the background, Pillow adds the text.
+            </div>
+
+            <div class="how-it-works" style="margin-bottom: 16px;">
+                <strong style="color:#00ff88;">Phase 3: Batch Generate Every Night (Day 3+)</strong><br><br>
+
+                <strong>The nightly pipeline:</strong><br>
+                &nbsp;&nbsp;1. <strong>8:00 PM:</strong> Cron job kicks off on the Jetson<br>
+                &nbsp;&nbsp;2. gemma3 generates 30 quotes + 30 matching image prompts<br>
+                &nbsp;&nbsp;3. Each prompt → Stable Diffusion → 512x512 image (~45 sec each)<br>
+                &nbsp;&nbsp;4. Python script overlays text on each background<br>
+                &nbsp;&nbsp;5. Exports to <code>~/content/ready/</code> folder<br>
+                &nbsp;&nbsp;6. <strong>8:00 AM:</strong> You wake up to 30 ready-to-post images<br><br>
+
+                <strong>Time: ~25-30 min total for 30 images.</strong> All while you sleep.<br><br>
+
+                <strong>For wallpapers / art (no text):</strong><br>
+                &nbsp;&nbsp;Even simpler — just the SD generation step. No overlay needed.<br>
+                &nbsp;&nbsp;Generate at higher quality with upscaling: SD generates 512x512, then<br>
+                &nbsp;&nbsp;Real-ESRGAN upscales to 2048x2048. Upscaling takes ~5 sec per image on Jetson.
+            </div>
+
+            <div class="how-it-works" style="margin-bottom: 16px;">
+                <strong style="color:#00ff88;">Phase 4: Post & Monetize (Week 2+)</strong><br><br>
+
+                <strong>TikTok slideshow formula:</strong><br>
+                &nbsp;&nbsp;- 5-8 images per slideshow<br>
+                &nbsp;&nbsp;- Trending audio (stoic = dark cinematic, aesthetic = lo-fi)<br>
+                &nbsp;&nbsp;- Post 2-3 times per day<br>
+                &nbsp;&nbsp;- Use trending hashtags + niche-specific tags<br>
+                &nbsp;&nbsp;- First 3-5 seconds must hook (best image first)<br><br>
+
+                <strong>Instagram grid:</strong><br>
+                &nbsp;&nbsp;- Post 1x per day, keep the grid aesthetic consistent<br>
+                &nbsp;&nbsp;- Reels with slideshow format<br>
+                &nbsp;&nbsp;- Pinterest too — AI wallpapers do great on Pinterest<br><br>
+
+                <strong>Money paths:</strong><br>
+                &nbsp;&nbsp;- <strong>TikTok Creator Fund</strong> — pays per view after 10K followers<br>
+                &nbsp;&nbsp;- <strong>Sell wallpaper packs</strong> — $5-10 for a pack of 50 AI wallpapers (Gumroad, Etsy)<br>
+                &nbsp;&nbsp;- <strong>Print on demand</strong> — put AI art on shirts, posters, phone cases (Redbubble, TeePublic)<br>
+                &nbsp;&nbsp;- <strong>Patreon</strong> — exclusive wallpapers / art for subscribers<br>
+                &nbsp;&nbsp;- <strong>Brand deals</strong> — once you have followers, brands pay for posts<br>
+                &nbsp;&nbsp;- <strong>Stock photo sites</strong> — sell AI images on Shutterstock, Adobe Stock
+            </div>
+
+            <div class="stack">
+                <span class="stack-item">Stable Diffusion 1.5</span>
+                <span class="stack-item">A1111 / ComfyUI</span>
+                <span class="stack-item">gemma3:4b (quotes + prompts)</span>
+                <span class="stack-item">Pillow (text overlay)</span>
+                <span class="stack-item">Real-ESRGAN (upscaling)</span>
+                <span class="stack-item">cron (nightly automation)</span>
+            </div>
+        </div>
+
+        <!-- ============================== -->
         <div class="section-divider">Browser Automation (Your Expertise)</div>
         <!-- ============================== -->
 
